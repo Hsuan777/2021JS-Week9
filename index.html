@@ -3,11 +3,320 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+  <link rel="preconnect" href="https://fonts.gstatic.com"> 
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/all.css">
   <title>Document</title>
 </head>
 <body>
-  <h1>Hello!</h1>
+  <nav class="navbar navbar-expand-lg navbar-light bg-white">
+    <div class="container">
+      <a class="navbar-brand" href="#">WOWOROOM</a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+        <div class="navbar-nav ms-auto">
+          <a class="nav-link active" aria-current="page" href="#">床墊優勢</a>
+          <a class="nav-link" href="#">好評推薦</a>
+          <a class="nav-link" href="#">運送方式</a>
+          <a class="nav-link text-primary" href="#">立即預訂</a>
+        </div>
+      </div>
+    </div>
+  </nav>
+  <div class="bg-dark py-3 mb-3"></div>
+  <main>
+    <!-- banner -->
+    <section class="container py-5">
+      <figure class="figure position-relative mb-5">
+        <img src="https://fakeimg.pl/1920x420" alt="" class="img-fluid ">
+        <figcaption class="figure-caption position-absolute bottom-0 start-0">
+          <h2 class="text-white p-5">窩窩家居<br> 跟您一起品味生活</h2>
+        </figcaption>
+      </figure>
+  
+      <!-- 床墊優勢 -->
+      <h2 class="text-center">床墊優勢</h2>
+      <div class="row row-cols-3 g-3">
+        <div class="col"><img src="https://fakeimg.pl/450x140" alt="" class="img-fluid">
+          <p class="text-center">原木料環保</p>
+        </div>
+        <div class="col"><img src="https://fakeimg.pl/450x140" alt="" class="img-fluid">
+          <p class="text-center">好收納</p>
+        </div>
+        <div class="col"><img src="https://fakeimg.pl/450x140" alt="" class="img-fluid">
+          <p class="text-center">好組裝</p>
+        </div>
+      </div>
+    </section>
+  
+    <!-- 家具比較 -->
+    <section class="bg-light">
+      <div class="container py-5">
+        <h2 class="text-center">家具比較</h2>
+        <table class="table">
+          <thead>
+            <tr>
+              <th class="border-0"></th>
+              <th class="text-center border-0">窩窩系統模組家具</th>
+              <th class="text-center text-grey border-0">組合式家具</th>
+              <th class="text-center text-grey border-0">實木家具</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <th class="border-top border-gery-50">可單人自行組裝</th>
+              <td class="text-center text-primary border-top border-gery-50"><i class="fas fa-check"></i></td>
+              <td class="text-center text-grey border-top border-gery-50">不一定</td>
+              <td class="border-top border-gery-50"></td>
+            </tr>
+            <tr>
+              <th>可多次重複拆裝</th>
+              <td class="text-center text-primary"><i class="fas fa-check"></i></td>
+              <td></td>
+              <td></td>
+            </tr>
+            <tr>
+              <th>床墊規格彈性大</th>
+              <td class="text-center text-primary"><i class="fas fa-check"></i></td>
+              <td class="text-center text-grey">不一定</td>
+              <td class="text-center text-grey">不一定</td>
+            </tr>
+            <tr>
+              <th>材質可長久使用</th>
+              <td class="text-center text-primary"><i class="fas fa-check"></i></td>
+              <td></td>
+              <td></td>
+            </tr>
+            <tr>
+              <th>小客車即可搬運</th>
+              <td class="text-center text-primary"><i class="fas fa-check"></i></td>
+              <td></td>
+              <td></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+  
+    <!-- 好評推薦 -->
+    <section class="bg-secondary py-5">
+      <div class="container p-3">
+        <h2 class="text-center text-white">好評推薦</h2>
+        <ul class="row row-cols-3 list-unstyled">
+          <li class="col">
+            <div class="d-flex align-items-center bg-white">
+              <!-- 購買商品圖 -->
+              <img src="https://fakeimg.pl/95x95" alt="" class="me-2">
+              <!-- 購買人資訊 -->
+              <div class="d-flex flex-column">
+                <!-- 購買人頭像與商品名稱 -->
+                <div class="d-flex align-items-center mb-2">
+                  <img src="https://fakeimg.pl/40x40" alt="" class="rounded-circle me-2">
+                  <h5 class="mb-0">王六角<span class="d-block text-primary h6 mb-0">Jodan 雙人床架</span></h5>
+                </div>
+                <!-- 推薦留言 -->
+                <p class="mb-0">CP值很高。</p>
+              </div>
+            </div>
+          </li>
+          <li class="col"></li>
+          <li class="col"></li>
+        </ul>
+      </div>
+    </section>
+  
+    <!-- 運送方式與商品列表 -->
+    <section class="container py-5">
+      <!-- 運送方式 -->
+      <h2 class="text-center mb-3">運送方式</h2>
+      <div class="row">
+        <div class="col-8 mx-auto">
+          <ul class="row row-cols-4 list-unstyled">
+            <li class="col d-flex flex-column align-items-center">
+              <div class="custom__tranSport d-flex justify-content-center align-items-center rounded-circle border border-dark mb-2">
+                <i class="fas fa-shopping-cart h2 mb-0"></i>
+              </div>
+              <p>STEP.1</p>
+              <p>選購商品</p>
+            </li>
+            <li class="col d-flex flex-column align-items-center">
+              <div class="custom__tranSport d-flex justify-content-center align-items-center rounded-circle border border-dark mb-2">
+                <i class="fas fa-info h2 mb-0"></i>
+              </div>
+              <p>STEP.2</p>
+              <p>填寫預定資料</p>
+            </li>
+            <li class="col d-flex flex-column align-items-center">
+              <div class="custom__tranSport d-flex justify-content-center align-items-center rounded-circle border border-dark mb-2">
+                <i class="fas fa-check h2 mb-0"></i>
+              </div>
+              <p>STEP.3</p>
+              <p>預定成功</p>
+            </li>
+            <li class="col d-flex flex-column align-items-center">
+              <div class="custom__tranSport d-flex justify-content-center align-items-center rounded-circle border border-dark mb-2">
+                <i class="fas fa-envelope h2 mb-0"></i>
+              </div>
+              <p>STEP.4</p>
+              <p>Email 付款資訊</p>
+            </li>
+          </ul>
+        </div>
+      </div>
+      <!-- 商品列表 -->
+      <select name="" id="" class="form-select w-25 mb-5">
+        <option value="" disable hidden selected>全部、找新品、限時折扣</option>
+        <option value="all">全部</option>
+        <option value="new">找新品</option>
+        <option value="onSale">限時折扣</option>
+      </select>
+      <ul class="row row-cols-3 list-unstyled">
+        <li class="col">
+          <div class="card border-0 h-100">
+            <div class="position-relative">
+              <a href="">
+                <img src="https://fakeimg.pl/255x302" class="card-img-top" alt="...">
+              </a>
+              <p class="position-absolute top-0 end-0 translate-middle-y bg-secondary rounded-start p-3 text-white">新品</p>
+            </div>
+            <div class="card-body p-0">
+              <input type="button" value="加入購物車" class="btn btn-dark rounded-0 w-100">
+              <h4 class="card-text text-info">title</h4>
+              <del>origin Price</del>
+              <p class="h4">onSale Price</p>
+            </div>
+          </div>
+        </li>
+        <li></li>
+        <li></li>
+      </ul>
+    </section>
+  
+    <!-- 我的購物車 -->
+    <section class="bg-light py-5">
+      <h2 class="text-center">我的購物車</h2>
+      <div class="container">
+        <div class="row">
+          <div class="col-8 mx-auto">
+            <table class="table">
+              <thead>
+                <tr>
+                  <th class="border-0">品項</th>
+                  <th class="border-0">單價</th>
+                  <th class="border-0">數量</th>
+                  <th class="border-0">金額</th>
+                  <th class="border-0"></th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td class="d-flex align-items-center">
+                    <img src="https://fakeimg.pl/80x80" alt="" class="me-2">
+                    <p class="mb-0">Antony 雙人床架／雙人加大</p>
+                  </td>
+                  <td>NT$12,000</td>
+                  <td>1</td>
+                  <td>NT$12,000</td>
+                  <td><button type="button" class="btn btn-light">X</button></td>
+                </tr>
+              </tbody>
+              <tfooter>
+                <tr>
+                  <th colspan="3" class="border-0">
+                    <input type="button" value="刪除所有品項" class="btn btn-white border-dark">
+                  </th>
+                  <th class="border-0">總金額</th>
+                  <th class="border-0">NT$13,980</th>
+                </tr>
+              </tfooter>
+            </table>
+          </div>
+        </div>
+      </div>
+    </section>
+  
+    <!-- 表單   -->
+    <section class="container py-5">
+      <h2 class="text-center mb-3">填寫預訂資料</h2>
+      <div class="row">
+        <div class="col-4 mx-auto">
+          <form action="">
+            <div class="mb-3">
+              <label for="clientName" class="form-label">姓名</label>
+              <input type="text" class="form-control" id="clientName" placeholder="請輸入姓名" required>
+            </div>
+            <div class="mb-3">
+              <label for="clientPhone" class="form-label">電話</label>
+              <input type="number" class="form-control" id="clientPhone" placeholder="請輸入電話" required>
+            </div>
+            <div class="mb-3">
+              <label for="clientEmail" class="form-label">Email</label>
+              <input type="mail" class="form-control" id="clientEmail" placeholder="請輸入 Email" required>
+            </div>
+            <div class="mb-3">
+              <label for="clientAddress" class="form-label">寄送地址</label>
+              <input type="text" class="form-control" id="clientAddress" placeholder="請輸入寄送地址" required>
+            </div>
+            <div class="mb-3">
+              <label for="clientPay" class="form-label">交易方式</label>
+              <select name="clientPay" id="clientPay" class="form-select" required>
+                <option value="" selected disable hidden>ATM、超商付款</option>
+                <option value="ATM">ATM</option>
+                <option value="超商付款">超商付款</option>
+              </select>
+            </div>
+            <div class="d-flex justify-content-center">
+              <input type="submit" value="送出預訂資料" class="btn btn-dark">
+            </div>
+          </form>
+        </div>
+      </div>
+    </section>
+  
+    <!-- 訂單編號 -->
+    <section class="container">
+      <div class="d-flex justify-content-end">
+        <input type="button" value="清除全部訂單" class="btn btn-outline-dark">
+          
+        </div>
+      <table class="table">
+        <thead>
+          <tr>
+            <th>訂單編號</th>
+            <th>聯絡人</th>
+            <th>聯絡地址</th>
+            <th>電子郵件</th>
+            <th>訂單品項</th>
+            <th>訂單日期</th>
+            <th class="text-center">訂單狀態</th>
+            <th class="text-center">操作</th>
+          </tr>
+        </thead>
+        <thbody>
+          <tr>
+            <td>10088377474</td>
+            <td>
+              <p class="mb-0">小杰</p>
+              <pclass="mb-0">0912345678</pclass>
+            </td>
+            <td>高雄市前鎮區六合路183巷66號</td>
+            <td>cccexample@gmail.com</td>
+            <td>Louvre 雙人床架</td>
+            <td>2021/03/08</td>
+            <td class="bg-dark text-center text-white">未處理</td>
+            <td class="text-center">
+              <input type="button" value="刪除" class="btn btn-danger">
+            </td>
+          </tr>
+        </thbody>
+      </table>
+    </section>
+  </main>
+  
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/js/bootstrap.bundle.min.js" integrity="sha384-JEW9xMcG8R+pH31jmWH6WWP0WintQrMb4s7ZOdauHnUtxwoG2vI5DkLtS3qm9Ekf" crossorigin="anonymous"></script>/
   <script src="js/all.js"></script>
 </body>
 </html>

@@ -1,0 +1,9 @@
+td, th {
+  vertical-align: middle;
+}
+.custom {
+  &__tranSport {
+    width: 115px;
+    height: 115px;
+  }
+}
