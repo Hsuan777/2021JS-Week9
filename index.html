@@ -176,26 +176,7 @@
         <option value="new">找新品</option>
         <option value="onSale">限時折扣</option>
       </select>
-      <ul class="row row-cols-3 list-unstyled">
-        <li class="col">
-          <div class="card border-0 h-100">
-            <div class="position-relative">
-              <a href="">
-                <img src="https://fakeimg.pl/255x302" class="card-img-top" alt="...">
-              </a>
-              <p class="position-absolute top-0 end-0 translate-middle-y bg-secondary rounded-start p-3 text-white">新品</p>
-            </div>
-            <div class="card-body p-0">
-              <input type="button" value="加入購物車" class="btn btn-dark rounded-0 w-100">
-              <h4 class="card-text text-info">title</h4>
-              <del>origin Price</del>
-              <p class="h4">onSale Price</p>
-            </div>
-          </div>
-        </li>
-        <li></li>
-        <li></li>
-      </ul>
+      <ul class="js-productsList row row-cols-3 g-5 list-unstyled"></ul>
     </section>
   
     <!-- 我的購物車 -->
@@ -214,7 +195,7 @@
                   <th class="border-0"></th>
                 </tr>
               </thead>
-              <tbody>
+              <tbody class="js-cartsList">
                 <tr>
                   <td class="d-flex align-items-center">
                     <img src="https://fakeimg.pl/80x80" alt="" class="me-2">
@@ -232,7 +213,7 @@
                     <input type="button" value="刪除所有品項" class="btn btn-white border-dark">
                   </th>
                   <th class="border-0">總金額</th>
-                  <th class="border-0">NT$13,980</th>
+                  <th class="js-finalTotal border-0">NT$13,980</th>
                 </tr>
               </tfooter>
             </table>
@@ -320,6 +301,7 @@
   </main>
   
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/js/bootstrap.bundle.min.js" integrity="sha384-JEW9xMcG8R+pH31jmWH6WWP0WintQrMb4s7ZOdauHnUtxwoG2vI5DkLtS3qm9Ekf" crossorigin="anonymous"></script>/
+  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
   <script src="js/all.js"></script>
 </body>
 </html>
