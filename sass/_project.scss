@@ -3,7 +3,28 @@ td, th {
 }
 .custom {
   &__tranSport {
-    width: 115px;
-    height: 115px;
+    > li {
+      position: relative;
+      &::after {
+        position: absolute;
+        content: "";
+        width: 0;
+        height: 0;
+        border-style: solid;
+        border-width: 7.5px 0 7.5px 10px;
+        border-color: transparent transparent transparent black;
+        top:50px;
+        right: -5px;
+      }
+      &:last-child {
+        &::after {
+          border-color:transparent ;
+        }
+      }
+    }
+    &__icon {
+      width: 115px;
+      height: 115px;
+    }
   }
 }
