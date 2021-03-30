@@ -17,11 +17,11 @@ const init = () => {
 const apiUrl = name => {
   return `https://hexschoollivejs.herokuapp.com/api/livejs/v1/customer/vic/${name}`
 }
-// 取得資料
+// get Data
 const getProducts = () => {
   axios.get(apiUrl('products')).then(response => {
-    originData = response.data.products
-    productsRender(originData)
+    originProductsData = response.data.products
+    productsRender(originProductsData)
   })
 }
 const getCarts = () => {
@@ -30,6 +30,38 @@ const getCarts = () => {
     cartsRender(originCartsData, response.data.finalTotal)
   })
 }
+
+// post Data
+const postProcust = (productID) => {
+  let tempProduct = {data:{}}
+  originProductsData.forEach(item => {
+    if (item.id === productID){
+      tempProduct.data.productId = productID
+      tempProduct.data.quantity = 1
+    }
+  })
+  axios.post(apiUrl('carts'), tempProduct).then(response => {
+    cartsRender(response.data.carts, response.data.finalTotal)
+  })
+}
+
+// delete carts
+const deleteProduct = (cartsID) => {
+  if (cartsID === 'clearAll' && cartsList.textContent === '') {
+    return
+  } else if (cartsID === 'clearAll' && cartsList.textContent !== '') {
+    axios.delete(apiUrl('carts')).then(response => {
+      if (response.status === 200) {
+        cartsRender(originCartsData, response.data.finalTotal)
+      }
+    }) 
+  } else {
+    axios.delete(`${apiUrl('carts')}/${cartsID}`).then(response => {
+      cartsRender(response.data.carts, response.data.finalTotal)
+    })
+  }
+}
+
 // 渲染畫面
 const productsRender = data => {
   let dataStr = ``
@@ -44,7 +76,7 @@ const productsRender = data => {
           <p class="position-absolute top-0 end-0 translate-middle-y bg-secondary rounded-start p-3 text-white">新品</p>
         </div>
         <div class="card-body p-0">
-          <input type="button" value="加入購物車" class="btn btn-dark rounded-0 w-100">
+          <button type="button" value="${item.id}" class="js-addCartsBtn btn btn-dark rounded-0 w-100">加入購物車</button>
           <h4 class="card-text text-info py-2 mb-0">${item.title}</h4>
           <del>${formatPrice(item.origin_price.toString())}</del>
           <p class="h4">${formatPrice(item.price.toString())}</p>
@@ -53,6 +85,12 @@ const productsRender = data => {
     </li>`
   })
   productsList.innerHTML = dataStr
+  const addCartsBtns = document.querySelectorAll('.js-addCartsBtn')
+  addCartsBtns.forEach(item => {
+    item.addEventListener('click', (Event)=>{
+      postProcust(Event.target.value)
+    })
+  })
 }
 
 const cartsRender = (data, totalMoney) => {
@@ -69,12 +107,18 @@ const cartsRender = (data, totalMoney) => {
       <td>${item.product.price}</td>
       <td>${item.quantity}</td>
       <td>${item.product.price * item.quantity}</td>
-      <td><button type="button" class="btn btn-light">X</button></td>
+      <td><button type="button" value="${item.id}" class="js-delBtn btn btn-light">X</button></td>
     </tr>
     `
   })
   cartsList.innerHTML = dataStr
   finalTotal.textContent = `NT$${totalMoney}`
+  const delBtns = document.querySelectorAll('.js-delBtn')
+  delBtns.forEach(item => {
+    item.addEventListener('click', (Event) => {
+      deleteProduct(Event.target.value)
+    })
+  })
 }
 
 
