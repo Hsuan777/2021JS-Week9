@@ -2,6 +2,7 @@
 const productsList = document.querySelector('.js-productsList');
 const cartsList = document.querySelector('.js-cartsList');
 const finalTotal = document.querySelector('.js-finalTotal');
+const submitOrder = document.querySelector('.js-submitOrder');
 
 /* set 變數與初始值 */
 let originProductsData = []
@@ -42,6 +43,28 @@ const postProcust = (productID) => {
   })
   axios.post(apiUrl('carts'), tempProduct).then(response => {
     cartsRender(response.data.carts, response.data.finalTotal)
+  })
+}
+
+const postOrder = (Event) => {
+  console.log(Event);
+  let userObj = {}
+  userObj.name    = Event.target[0].value;
+  userObj.tel     = Event.target[1].value;
+  userObj.email   = Event.target[2].value;
+  userObj.address = Event.target[3].value;
+  userObj.payment = Event.target[4].value;
+  axios.post(apiUrl('orders'), {data:{user:userObj}}).then(response => {
+    if (response.status === 200) {
+      cartsRender([], 0)
+      Array.from(Event.target).forEach(item => {
+      if (item.value === '送出預訂資料'){
+        item.value = '送出預訂資料';
+      } else {
+        item.value = '';
+      }
+      })
+    }
   })
 }
 
@@ -125,4 +148,10 @@ const cartsRender = (data, totalMoney) => {
 const formatPrice = numStr => {
   return numStr.replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ",");
 }
+
+submitOrder.addEventListener('submit', (Event) => {
+  Event.preventDefault();
+  postOrder(Event);
+})
+
 init()

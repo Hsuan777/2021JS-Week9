@@ -216,14 +216,14 @@
       <h2 class="text-center fw-bolder mb-3">填寫預訂資料</h2>
       <div class="row">
         <div class="col-4 mx-auto">
-          <form action="">
+          <form action=""class="js-submitOrder">
             <div class="mb-3">
               <label for="clientName" class="form-label">姓名</label>
-              <input type="text" class="form-control" id="clientName" placeholder="請輸入姓名" required>
+              <input type="text" class="form-control" id="clientName" placeholder="請輸入姓名" minlength="2" required>
             </div>
             <div class="mb-3">
               <label for="clientPhone" class="form-label">電話</label>
-              <input type="number" class="form-control" id="clientPhone" placeholder="請輸入電話" required>
+              <input type="number" class="form-control" id="clientPhone" placeholder="請輸入電話" min="10" required>
             </div>
             <div class="mb-3">
               <label for="clientEmail" class="form-label">Email</label>
@@ -231,7 +231,7 @@
             </div>
             <div class="mb-3">
               <label for="clientAddress" class="form-label">寄送地址</label>
-              <input type="text" class="form-control" id="clientAddress" placeholder="請輸入寄送地址" required>
+              <input type="text" class="form-control" id="clientAddress" placeholder="請輸入寄送地址" minlength="10" required>
             </div>
             <div class="mb-3">
               <label for="clientPay" class="form-label">交易方式</label>
