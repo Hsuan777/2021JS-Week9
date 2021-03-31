@@ -4,7 +4,9 @@ const cartsList = document.querySelector('.js-cartsList');
 const finalTotal = document.querySelector('.js-finalTotal');
 const submitOrder = document.querySelector('.js-submitOrder');
 
+
 /* set 變數與初始值 */
+
 let originProductsData = []
 let originCartsData = []
 
