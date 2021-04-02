@@ -3,12 +3,59 @@ const productsList = document.querySelector('.js-productsList');
 const cartsList = document.querySelector('.js-cartsList');
 const finalTotal = document.querySelector('.js-finalTotal');
 const submitOrder = document.querySelector('.js-submitOrder');
+const inputs = document.querySelectorAll("input[type=text],input[type=number],input[type=email],select");
 
 
 /* set 變數與初始值 */
 
 let originProductsData = []
 let originCartsData = []
+const constraints = {
+  clientName: {
+    presence: {
+      message: "請輸入姓名"
+    },
+    length: {
+      minimum: 2,
+      tooShort: "請勿輸入一個字",
+    }
+  },
+  clientPhone: {
+    presence: {
+      message: "請輸入電話"
+    },
+    length: {
+      minimum: 10,
+      tooShort: "請輸入正確的電話號碼",
+    },
+    format: {
+      pattern: "[0-9]+",
+      message: "請輸入正確的電話號碼"
+    }
+  },
+  clientEmail: {
+    presence: {
+      message: "請輸入電子信箱"
+    },
+    email: {
+      message: "請輸入正確的電子信箱"
+    },
+  },
+  clientAddress: {
+    presence: {
+      message: "請輸入寄送地址"
+    },
+    length: {
+      minimum: 10,
+      tooShort: "請輸入正確地址",
+    },
+  },
+  clientPay: {
+    presence: {
+      message: "請選擇交易方式"
+    },
+  }
+}
 
 /* function */
 // 資料初始化
@@ -145,7 +192,9 @@ const cartsRender = (data, totalMoney) => {
     })
   })
 }
-
+const formatErrorMsg = str => {
+  console.log(str.split('')[2]);
+}
 
 const formatPrice = numStr => {
   return numStr.replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ",");
@@ -154,6 +203,19 @@ const formatPrice = numStr => {
 submitOrder.addEventListener('submit', (Event) => {
   Event.preventDefault();
   postOrder(Event);
+  
+})
+
+inputs.forEach(item => {
+  item.addEventListener('change', () => {
+    item.nextElementSibling.textContent = '';
+    let errors = validate(submitOrder, constraints);
+    if (errors) {
+      Object.keys(errors).forEach(item => {
+        document.querySelector(`.${item}`).textContent =  errors[item][0].split(' ')[2]
+      })
+    }
+  })
 })
 
 init()
