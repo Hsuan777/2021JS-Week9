@@ -6,7 +6,7 @@ cd dist
 cp ../index.html index.html
 cp -r ../js js
 cp -r ../css css
-cp -r ../imgae image
+cp -r ../image image
 cd css 
 rm *.map
 cd ..
