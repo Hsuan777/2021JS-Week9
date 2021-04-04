@@ -6,6 +6,7 @@ const submitOrder = document.querySelector('.js-submitOrder');
 const inputs = document.querySelectorAll("input[type=text],input[type=number],input[type=email],select");
 
 
+
 /* set 變數與初始值 */
 
 let originProductsData = []
@@ -82,7 +83,7 @@ const getCarts = () => {
 }
 
 // post Data
-const postProcust = (productID) => {
+const postProduct = (productID) => {
   let tempProduct = {data:{}}
   originProductsData.forEach(item => {
     if (item.id === productID){
@@ -115,6 +116,23 @@ const postOrder = (Event) => {
       })
     }
   })
+}
+
+// patch carts
+const patchProduct = (catrsID, quantity, action) => {
+  let tempProduct = {data:{}}
+  tempProduct.data.id = catrsID
+  if (action === "+"){
+    tempProduct.data.quantity = quantity*1 + 1
+    axios.patch(apiUrl('carts'), tempProduct).then(response => {
+      cartsRender(response.data.carts, response.data.finalTotal)
+    })
+  } else if (action === "-" && quantity !== "1"){
+    tempProduct.data.quantity = quantity - 1
+    axios.patch(apiUrl('carts'), tempProduct).then(response => {
+      cartsRender(response.data.carts, response.data.finalTotal)
+    })
+  }
 }
 
 // delete carts
@@ -160,7 +178,7 @@ const productsRender = data => {
   const addCartsBtns = document.querySelectorAll('.js-addCartsBtn')
   addCartsBtns.forEach(item => {
     item.addEventListener('click', (Event)=>{
-      postProcust(Event.target.value)
+      postProduct(Event.target.value)
     })
   })
 }
@@ -177,7 +195,13 @@ const cartsRender = (data, totalMoney) => {
         </div>
       </td>
       <td>${formatPrice(item.product.price)}</td>
-      <td>${item.quantity}</td>
+      <td>
+        <div class="d-flex justify-content-around align-items-center">
+          <button type="button" value="${item.id}" class="js-qtDown btn btn-light">-</button>
+          <button class="btn btn-light">${item.quantity}</button>
+          <button type="button" value="${item.id}" class="js-qtUp btn btn-light">+</button>
+        </div>
+      </td>
       <td>${formatPrice(item.product.price * item.quantity)}</td>
       <td><button type="button" value="${item.id}" class="js-delBtn btn btn-light">X</button></td>
     </tr>
@@ -186,11 +210,24 @@ const cartsRender = (data, totalMoney) => {
   cartsList.innerHTML = dataStr
   finalTotal.textContent = `NT$${formatPrice(totalMoney)}`
   const delBtns = document.querySelectorAll('.js-delBtn')
+  const qtDown = document.querySelectorAll('.js-qtDown');
+  const qtUp = document.querySelectorAll('.js-qtUp');
   delBtns.forEach(item => {
-    item.addEventListener('click', (Event) => {
+    item.addEventListener('click', Event => {
       deleteProduct(Event.target.value)
     })
   })
+  qtDown.forEach(item => {
+    item.addEventListener('click', Event => {
+      patchProduct(Event.target.value, item.nextElementSibling.textContent, "-")
+    })
+  })
+  qtUp.forEach(item => {
+    item.addEventListener('click', Event => {
+      patchProduct(Event.target.value, item.previousElementSibling.textContent, "+")
+    })
+  })
+  
 }
 const formatErrorMsg = str => {
   console.log(str.split('')[2]);
@@ -205,6 +242,7 @@ submitOrder.addEventListener('submit', (Event) => {
   postOrder(Event);
   
 })
+
 
 inputs.forEach(item => {
   item.addEventListener('change', () => {
