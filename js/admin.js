@@ -53,9 +53,9 @@ const deleteOrder = (ordersID) => {
   }
 }
 
-const ordersRender = (data, index) => { 
+const ordersRender = (data) => { 
   let dataStr = ``;
-  data.forEach(item => {
+  data.forEach((item, index) => {
     let otherProductsStr = ``
     let moreStr = ``
     if (item.products[1]) {
@@ -79,8 +79,7 @@ const ordersRender = (data, index) => {
       <td>${item.user.email}</td>
       <td>
         ${item.products[0].title}
-        
-         <div class="collapse" id="collapse${index}">
+        <div class="collapse" id="collapse${index}">
           ${otherProductsStr}
         </div>
       </td>
