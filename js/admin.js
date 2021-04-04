@@ -53,9 +53,21 @@ const deleteOrder = (ordersID) => {
   }
 }
 
-const ordersRender = (data) => { 
+const ordersRender = (data, index) => { 
   let dataStr = ``;
   data.forEach(item => {
+    let otherProductsStr = ``
+    let moreStr = ``
+    if (item.products[1]) {
+      moreStr = `
+      <a class="btn btn-primary" data-bs-toggle="collapse" href="#collapse${index}" role="button" aria-expanded="false" aria-controls="collapse${index}">
+        more
+      </a>`
+    }
+    item.products.forEach((productItem, index) => {
+      if (item.products[1] && index !== 0)
+      otherProductsStr += `<p class="mb-0">${productItem.title}</p>`
+    }) 
     dataStr += `
     <tr>
       <td>${item.id}</td>
@@ -65,10 +77,17 @@ const ordersRender = (data) => {
       </td>
       <td>${item.user.address}</td>
       <td>${item.user.email}</td>
-      <td>${item.products[0].title}</td>
+      <td>
+        ${item.products[0].title}
+        
+         <div class="collapse" id="collapse${index}">
+          ${otherProductsStr}
+        </div>
+      </td>
       <td>${formatDate(item.createdAt*1000)}</td>
       <td class="bg-dark text-center text-white">${item.paid ? '已處理' : '未處理'}</td>
       <td class="text-center">
+        ${moreStr}
         <button type="button" value="${item.id}" class="js-delBtn btn btn-danger">刪除</button>
       </td>
     </tr>   
