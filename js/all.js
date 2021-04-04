@@ -150,8 +150,8 @@ const productsRender = data => {
         <div class="card-body p-0">
           <button type="button" value="${item.id}" class="js-addCartsBtn btn btn-dark rounded-0 w-100">加入購物車</button>
           <h4 class="card-text text-info py-2 mb-0">${item.title}</h4>
-          <del>${formatPrice(item.origin_price.toString())}</del>
-          <p class="h4">${formatPrice(item.price.toString())}</p>
+          <del>${formatPrice(item.origin_price)}</del>
+          <p class="h4">${formatPrice(item.price)}</p>
         </div>
       </div>
     </li>`
@@ -176,15 +176,15 @@ const cartsRender = (data, totalMoney) => {
           <p class="mb-0">${item.product.title}</p>
         </div>
       </td>
-      <td>${item.product.price}</td>
+      <td>${formatPrice(item.product.price)}</td>
       <td>${item.quantity}</td>
-      <td>${item.product.price * item.quantity}</td>
+      <td>${formatPrice(item.product.price * item.quantity)}</td>
       <td><button type="button" value="${item.id}" class="js-delBtn btn btn-light">X</button></td>
     </tr>
     `
   })
   cartsList.innerHTML = dataStr
-  finalTotal.textContent = `NT$${totalMoney}`
+  finalTotal.textContent = `NT$${formatPrice(totalMoney)}`
   const delBtns = document.querySelectorAll('.js-delBtn')
   delBtns.forEach(item => {
     item.addEventListener('click', (Event) => {
@@ -197,7 +197,7 @@ const formatErrorMsg = str => {
 }
 
 const formatPrice = numStr => {
-  return numStr.replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ",");
+  return numStr.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 }
 
 submitOrder.addEventListener('submit', (Event) => {
