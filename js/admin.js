@@ -13,8 +13,8 @@ const getOrder = () => {
   axios.get(apiUrl, {headers:{Authorization:token}})
   .then(response => {
     originOrdersData = response.data.orders
-    c3Render(originOrdersData)
     ordersRender(originOrdersData)
+    highChartRender(originOrdersData)
   })
 }
 
@@ -42,11 +42,13 @@ const deleteOrder = (ordersID) => {
     axios.delete(apiUrl, {headers:{Authorization:token}}).then(response => {
       if (response.status === 200) {
         ordersRender(response.data.orders)
+        highChartRender(response.data.orders)
       }
     }) 
   } else {
     axios.delete(`${apiUrl}/${ordersID}`, {headers:{Authorization:token}}).then(response => {
       ordersRender(response.data.orders)
+      highChartRender(response.data.orders)
     })
   }
 }
@@ -82,41 +84,59 @@ const ordersRender = (data) => {
   })
 }
 
-// 全品項營收比重 品項數量 x 單價
-// 格式為 [[品項一, 總收益], []]
-const c3Render = (orderData) => { 
-  let tempArray = []
+// highChart.js
+const highChartRender = orderData => {
+  let tempData = []
   // 將訂單資料的商品 ID 數量整合
   orderData.forEach(orderItem => {
     orderItem.products.forEach(item => {
       totalProductsData[item.id].totalQuantity += item.quantity
     })
   })
-  console.log(totalProductsData);
-  tempArray = Object.keys(totalProductsData)
-  tempArray.map((item, index) =>{
-    tempArray[index] = [totalProductsData[item].title, totalProductsData[item].price*totalProductsData[item].totalQuantity]
+  tempData = Object.keys(totalProductsData)
+  tempData.map((item, index) =>{
+    tempData[index] = {name:totalProductsData[item].title, y:totalProductsData[item].price*totalProductsData[item].totalQuantity}
     return
   })
-  console.log(tempArray);
-  let chart = c3.generate({
-    bindto: '#chart',
-    data: {
-      type : 'pie',
-      columns: tempArray,
-      colors: {
-        'Charles 系列儲物組合': '##6A33F8',
-        'Charles 雙人床架': '#9D7FEA',
-        'Louvre 單人床架': '#301E5F',
-        'Antony 雙人床架／雙人加大': '#5434A7',
-        'Louvre 雙人床架／雙人加大': '#DACBFD',
-        'Antony 床邊桌': '',
-        'Antony 遮光窗簾': '',
-      },
+  console.log(tempData);
+  let colors = ['#3366CC', '#DC3912', '#FF9900', '#109618', '#990099', '#3B3EAC', '#0099C6', '#DD4477', '#66AA00', '#B82E2E', '#316395', '#994499', '#22AA99', '#AAAA11', '#6633CC', '#E67300', '#8B0707', '#329262', '#5574A6', '#3B3EAC'];
+
+  Highcharts.chart('highChart', {
+    chart: {
+      plotBackgroundColor: null,
+      plotBorderWidth: null,
+      plotShadow: false,
+      type: 'pie'
     },
-    pie: {
-      
+    title: {
+      text: '全品項營收'
     },
+    tooltip: {
+      pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
+    },
+    colors: colors,
+    plotOptions: {
+      pie: {
+        allowPointSelect: true,
+        innerSize: '50%',
+        cursor: 'pointer',
+        dataLabels: {
+            enabled: true,
+            format: '<b>{point.name}</b>: {point.percentage:.1f} %',
+            connectorColor: 'black'
+        }
+      }
+    },
+    xAxis: {
+      categories: Object.keys(totalProductsData)
+    },
+    series: [{
+      name: '營收比例',
+      data: tempData
+    }],
+    credits: {
+      enabled: false
+  	}
   });
 }
 
