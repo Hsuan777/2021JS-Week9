@@ -1,9 +1,15 @@
 /* get DOM */
 const ordersList = document.querySelector('.js-ordersList');
+const tokenDisplay = document.querySelector('.js-tokenDisplay');
+const tokenInput = document.querySelector('.js-tokenInput');
+const tokenSubmit = document.querySelector('.js-tokenSubmit');
+const orderDisplay = document.querySelector('.js-orderDisplay');
+const chartDisplay = document.getElementById('highChart')
+const signOut = document.querySelector('.js-signOut');
 
 /* set 變數與初始值 */
-const token = 'iES1kIWpBWTvhiBYoMVEVxnPBCb2';
 const apiUrl = 'https://hexschoollivejs.herokuapp.com/api/livejs/v1/admin/vic/orders';
+let token = '';
 let originOrdersData = []
 let totalProductsData = {}
 
@@ -12,6 +18,8 @@ let totalProductsData = {}
 const getOrder = () => { 
   axios.get(apiUrl, {headers:{Authorization:token}})
   .then(response => {
+    orderDisplay.classList.remove('d-none')
+    chartDisplay.classList.remove('d-none')
     originOrdersData = response.data.orders
     ordersRender(originOrdersData)
     highChartRender(originOrdersData)
@@ -116,9 +124,7 @@ const highChartRender = orderData => {
     tempData[index] = {name:totalProductsData[item].title, y:totalProductsData[item].price*totalProductsData[item].totalQuantity}
     return
   })
-  console.log(tempData);
   let colors = ['#3366CC', '#DC3912', '#FF9900', '#109618', '#990099', '#3B3EAC', '#0099C6', '#DD4477', '#66AA00', '#B82E2E', '#316395', '#994499', '#22AA99', '#AAAA11', '#6633CC', '#E67300', '#8B0707', '#329262', '#5574A6', '#3B3EAC'];
-
   Highcharts.chart('highChart', {
     chart: {
       plotBackgroundColor: null,
@@ -163,5 +169,33 @@ const formatDate = (time) => {
   let date = new Date(time)
   return `${date.getFullYear()}/${date.getMonth()+1}/${date.getDate()}` 
 }
-getProducts()
-getOrder()
+
+
+tokenSubmit.addEventListener('click', () => {
+  if (tokenInput.value !== ""){
+    document.cookie = `hexToken=${token}; expires=${new Date().getTime()*10}; path=/`
+    token = tokenInput.value
+    getOrder()
+    getProducts()
+    tokenInput.value = ''
+    tokenDisplay.classList.add('d-none')
+  } 
+})
+
+signOut.addEventListener('click', () => {
+  document.cookie = 'hexToken=; expires=; path=/'
+  tokenDisplay.classList.remove('d-none')
+  orderDisplay.classList.add('d-none')
+  chartDisplay.classList.add('d-none')
+  originOrdersData = []
+  totalProductsData = {}
+  ordersRender(originOrdersData)
+  highChartRender(originOrdersData)
+})
+
+token = document.cookie.replace(/(?:(?:^|.*;\s*)hexToken\s*=\s*([^;]*).*$)|^.*$/, '$1');
+if (token) {
+  tokenDisplay.classList.add('d-none')
+  getOrder()
+  getProducts()
+}
