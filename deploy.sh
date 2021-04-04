@@ -4,6 +4,7 @@ rm dist
 mkdir dist
 cd dist
 cp ../index.html index.html
+cp ../manage.html manage.html
 cp -r ../js js
 cp -r ../css css
 cp -r ../image image
