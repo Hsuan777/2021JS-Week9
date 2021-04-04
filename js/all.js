@@ -97,7 +97,6 @@ const postProduct = (productID) => {
 }
 
 const postOrder = (Event) => {
-  console.log(Event);
   let userObj = {}
   userObj.name    = Event.target[0].value;
   userObj.tel     = Event.target[1].value;
@@ -228,9 +227,6 @@ const cartsRender = (data, totalMoney) => {
     })
   })
   
-}
-const formatErrorMsg = str => {
-  console.log(str.split('')[2]);
 }
 
 const formatPrice = numStr => {
