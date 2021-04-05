@@ -85,15 +85,20 @@ const getCarts = () => {
 // post Data
 const postProduct = (productID) => {
   let tempProduct = {data:{}}
-  originProductsData.forEach(item => {
-    if (item.id === productID){
-      tempProduct.data.productId = productID
-      tempProduct.data.quantity = 1
-    }
-  })
-  axios.post(apiUrl('carts'), tempProduct).then(response => {
-    cartsRender(response.data.carts, response.data.finalTotal)
-  })
+  let cartsHas = originCartsData.find(item => {
+    return item.product.id === productID
+  });
+  if (cartsHas === undefined) {
+    originProductsData.forEach(item => {
+      if (item.id === productID){
+        tempProduct.data.productId = productID
+        tempProduct.data.quantity = 1
+      }
+    })
+    axios.post(apiUrl('carts'), tempProduct).then(response => {
+      cartsRender(response.data.carts, response.data.finalTotal)
+    })
+  }
 }
 
 const postOrder = (Event) => {
@@ -140,9 +145,7 @@ const deleteProduct = (cartsID) => {
     return
   } else if (cartsID === 'clearAll' && cartsList.textContent !== '') {
     axios.delete(apiUrl('carts')).then(response => {
-      if (response.status === 200) {
-        cartsRender(originCartsData, response.data.finalTotal)
-      }
+      cartsRender(originCartsData, response.data.finalTotal)
     }) 
   } else {
     axios.delete(`${apiUrl('carts')}/${cartsID}`).then(response => {
