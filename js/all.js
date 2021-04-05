@@ -108,18 +108,20 @@ const postOrder = (Event) => {
   userObj.email   = Event.target[2].value;
   userObj.address = Event.target[3].value;
   userObj.payment = Event.target[4].value;
-  axios.post(apiUrl('orders'), {data:{user:userObj}}).then(response => {
-    if (response.status === 200) {
-      cartsRender([], 0)
-      Array.from(Event.target).forEach(item => {
-      if (item.value === '送出預訂資料'){
-        item.value = '送出預訂資料';
-      } else {
-        item.value = '';
+  if (cartsList.textContent !== ''){
+    axios.post(apiUrl('orders'), {data:{user:userObj}}).then(response => {
+      if (response.status === 200) {
+        cartsRender([], 0)
+        Array.from(Event.target).forEach(item => {
+          if (item.value === '送出預訂資料'){
+            item.value = '送出預訂資料';
+          } else {
+            item.value = '';
+          }
+        })
       }
-      })
-    }
-  })
+    })
+  }
 }
 
 // patch carts
