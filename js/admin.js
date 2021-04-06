@@ -225,6 +225,7 @@ signOut.addEventListener('click', () => {
   totalProductsData = {}
   ordersRender(originOrdersData)
   highChartRender(originOrdersData)
+  window.location.replace('./index.html')
 })
 
 // 進入頁面時從 cookie 取出 token
