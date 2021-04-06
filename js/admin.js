@@ -2,6 +2,7 @@
 const ordersList = document.querySelector('.js-ordersList');
 const tokenDisplay = document.querySelector('.js-tokenDisplay');
 const tokenInput = document.querySelector('.js-tokenInput');
+const pathInput = document.querySelector('.js-pathInput');
 const tokenSubmit = document.querySelector('.js-tokenSubmit');
 const errorMsg = document.querySelector('.js-errorMsg');
 const orderDisplay = document.querySelector('.js-orderDisplay');
@@ -9,33 +10,35 @@ const chartDisplay = document.getElementById('highChart')
 const signOut = document.querySelector('.js-signOut');
 
 /* set 變數與初始值 */
-const apiUrl = 'https://hexschoollivejs.herokuapp.com/api/livejs/v1/admin/vic/orders';
+const apiUrl = 'https://hexschoollivejs.herokuapp.com/api/livejs/v1/admin';
 let token = '';
+let apiPath = '';
 let originOrdersData = []
 let totalProductsData = {}
 
 /* function */
 // get Data
 const getOrder = () => { 
-  axios.get(apiUrl, {headers:{Authorization:token}})
+  axios.get(`${apiUrl}/${apiPath}/orders`, {headers:{Authorization:token}})
   .then(response => {
     tokenDisplay.classList.add('d-none')
     orderDisplay.classList.remove('d-none')
     chartDisplay.classList.remove('d-none')
     originOrdersData = response.data.orders
-   
     ordersRender(originOrdersData)
     highChartRender(originOrdersData)
-  }).catch(response => {
-    if (response.message === 'Request failed with status code 403') {
-      errorMsg.textContent = 'Token Error'
+  }).catch(error => {
+    if (error) {
+      tokenDisplay.classList.remove('d-none')
+      errorMsg.textContent = 'Input Error'
       document.cookie = 'hexToken=; expires=; path=/'
+      document.cookie = 'hexPath=; expires=; path=/'
     }
   })
 }
 
 const getProducts = () => {
-  axios.get('https://hexschoollivejs.herokuapp.com/api/livejs/v1/customer/vic/products').then(response => {
+  axios.get(`https://hexschoollivejs.herokuapp.com/api/livejs/v1/customer/${apiPath}/products`).then(response => {
     let productsData = response.data.products
     // 列出所有商品 ID，以利後續圖表整合
     productsData.forEach(item => {
@@ -47,6 +50,13 @@ const getProducts = () => {
         }
       }
     })
+  }).catch(error => {
+    if (error) {
+      tokenDisplay.classList.remove('d-none')
+      errorMsg.textContent = 'Input Error'
+      document.cookie = 'hexToken=; expires=; path=/'
+      document.cookie = 'hexPath=; expires=; path=/'
+    }
   })
 }
 
@@ -55,14 +65,12 @@ const deleteOrder = (ordersID) => {
   if (ordersID === 'clearAll' && ordersList.textContent === '') {
     return
   } else if (ordersID === 'clearAll' && ordersList.textContent !== '') {
-    axios.delete(apiUrl, {headers:{Authorization:token}}).then(response => {
-      if (response.status === 200) {
-        ordersRender(response.data.orders)
-        highChartRender(response.data.orders)
-      }
+    axios.delete(`${apiUrl}/${apiPath}/orders`, {headers:{Authorization:token}}).then(response => {
+      ordersRender(response.data.orders)
+      highChartRender(response.data.orders)
     }) 
   } else {
-    axios.delete(`${apiUrl}/${ordersID}`, {headers:{Authorization:token}}).then(response => {
+    axios.delete(`${apiUrl}/${apiPath}/orders/${ordersID}`, {headers:{Authorization:token}}).then(response => {
       ordersRender(response.data.orders)
       highChartRender(response.data.orders)
     })
@@ -179,18 +187,25 @@ const formatDate = (time) => {
 
 // 將 token 存入 cookie
 tokenSubmit.addEventListener('click', () => {
-  if (tokenInput.value !== ""){
+  if (pathInput.value !== "" && tokenInput.value !== ""){
     token = tokenInput.value
+    apiPath = pathInput.value
     document.cookie = `hexToken=${token}; expires=${new Date().getTime()*10}; path=/`
+    document.cookie = `hexPath=${apiPath}; expires=${new Date().getTime()*10}; path=/`
     tokenInput.value = ''
+    pathInput.value = ''
     getOrder()
     getProducts()
   } 
 })
+
+// 暫存 patch 與 token
 tokenInput.addEventListener('keydown', (Event) => {
-  if (Event.key === 'Enter' && tokenInput.value !== ""){
+  if (Event.key === 'Enter' && pathInput.value !== '' && tokenInput.value !== ''){
     token = tokenInput.value
+    apiPath = pathInput.value
     document.cookie = `hexToken=${token}; expires=${new Date().getTime()*10}; path=/`
+    document.cookie = `hexPath=${apiPath}; expires=${new Date().getTime()*10}; path=/`
     tokenInput.value = ''
     getOrder()
     getProducts()
@@ -201,6 +216,7 @@ tokenInput.addEventListener('keydown', (Event) => {
 // 登出並清除 cookie
 signOut.addEventListener('click', () => {
   document.cookie = 'hexToken=; expires=; path=/'
+  document.cookie = 'hexPath=; expires=; path=/'
   tokenDisplay.classList.remove('d-none')
   orderDisplay.classList.add('d-none')
   chartDisplay.classList.add('d-none')
@@ -213,7 +229,8 @@ signOut.addEventListener('click', () => {
 
 // 進入頁面時從 cookie 取出 token
 token = document.cookie.replace(/(?:(?:^|.*;\s*)hexToken\s*=\s*([^;]*).*$)|^.*$/, '$1');
-if (token) {
+apiPath = document.cookie.replace(/(?:(?:^|.*;\s*)hexPath\s*=\s*([^;]*).*$)|^.*$/, '$1');
+if (token && apiPath) {
   getOrder()
   getProducts()
 } else {
