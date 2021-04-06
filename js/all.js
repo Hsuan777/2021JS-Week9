@@ -1,5 +1,6 @@
 /* get DOM */
 const productsList = document.querySelector('.js-productsList');
+const productsCategory = document.querySelector('.js-productsCategory');
 const cartsList = document.querySelector('.js-cartsList');
 const finalTotal = document.querySelector('.js-finalTotal');
 const submitOrder = document.querySelector('.js-submitOrder');
@@ -72,6 +73,7 @@ const apiUrl = name => {
 const getProducts = () => {
   axios.get(apiUrl('products')).then(response => {
     originProductsData = response.data.products
+    categoryOptions()
     productsRender(originProductsData)
   })
 }
@@ -83,7 +85,7 @@ const getCarts = () => {
 }
 
 // post Data
-const postProduct = (productID) => {
+const postProduct = productID => {
   let tempProduct = {data:{}}
   let cartsHas = originCartsData.find(item => {
     return item.product.id === productID
@@ -101,7 +103,7 @@ const postProduct = (productID) => {
   }
 }
 
-const postOrder = (Event) => {
+const postOrder = Event => {
   let userObj = {}
   userObj.name    = Event.target[0].value;
   userObj.tel     = Event.target[1].value;
@@ -157,6 +159,7 @@ const deleteProduct = (cartsID) => {
 }
 
 // 渲染畫面
+// 產品清單
 const productsRender = data => {
   let dataStr = ``
   data.forEach(item => {
@@ -178,7 +181,7 @@ const productsRender = data => {
       </div>
     </li>`
   })
-  productsList.innerHTML = dataStr
+  productsList.innerHTML = dataStr;
   const addCartsBtns = document.querySelectorAll('.js-addCartsBtn')
   addCartsBtns.forEach(item => {
     item.addEventListener('click', (Event)=>{
@@ -187,6 +190,24 @@ const productsRender = data => {
   })
 }
 
+// 類別清單
+const categoryOptions = () => { 
+  let selectOptions = ``
+  let tempCategory = {}
+  originProductsData.forEach(item => {
+    if (tempCategory[item.category] === undefined){
+      tempCategory[item.category] = 1
+    } else {
+      tempCategory[item.category] += 1
+    }
+  })
+  Object.keys(tempCategory).forEach(item => {
+    selectOptions += `<option value="${item}">${item}</option>`
+  })
+  productsCategory.innerHTML = '<option value="all" selected>全部</option>' + selectOptions 
+}
+
+// 購物車清單
 const cartsRender = (data, totalMoney) => {
   let dataStr = ``
   data.forEach(item => {
@@ -234,14 +255,28 @@ const cartsRender = (data, totalMoney) => {
   
 }
 
+// 數字千分位
 const formatPrice = numStr => {
   return numStr.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 }
 
-submitOrder.addEventListener('submit', (Event) => {
+submitOrder.addEventListener('submit', Event => {
   Event.preventDefault();
   postOrder(Event);
-  
+})
+
+productsCategory.addEventListener('change', Event => {
+  let tempData = [];
+  if (Event.target.value === 'all') {
+    productsRender(originProductsData);
+  } else {
+    originProductsData.forEach(item => {
+      if (item.category === Event.target.value){
+        tempData.push(item);
+      }
+    })
+    productsRender(tempData);
+  }
 })
 
 
