@@ -4,7 +4,7 @@ const productsCategory = document.querySelector('.js-productsCategory');
 const cartsList = document.querySelector('.js-cartsList');
 const finalTotal = document.querySelector('.js-finalTotal');
 const submitOrder = document.querySelector('.js-submitOrder');
-const inputs = document.querySelectorAll("input[type=text],input[type=number],input[type=email],select");
+const inputs = document.querySelectorAll("input[type=text],input[type=number],input[type=email],select[name=clientPay]");
 
 
 
