@@ -60,6 +60,13 @@ const getProducts = () => {
   })
 }
 
+// put Data
+const putOrder = (orderID, bool) => { 
+  let orderData = {data:{id: orderID, paid: bool}}
+  axios.put(`${apiUrl}/${apiPath}/orders`, orderData, {headers:{Authorization:token}}).then(response => {
+    ordersRender(response.data.orders)
+  })
+}
 // delete Data
 const deleteOrder = (ordersID) => { 
   if (ordersID === 'clearAll' && ordersList.textContent === '') {
@@ -108,7 +115,15 @@ const ordersRender = (data) => {
         </div>
       </td>
       <td>${formatDate(item.createdAt*1000)}</td>
-      <td class="bg-dark text-center text-white">${item.paid ? '已處理' : '未處理'}</td>
+      <td class="bg-dark text-white">
+        <div class="d-flex align-items-center">
+          <label class="switch me-2">
+            <input type="checkbox" data-orderID="${item.id}" ${item.paid ? 'checked' : ''} >
+            <span class="slider round"></span>
+          </label>
+          <span>${item.paid ? '已處理' : '未處理'}</span> 
+        </div>
+      </td>
       <td class="text-center">
         ${moreStr}
         <button type="button" value="${item.id}" class="js-delBtn btn btn-danger">刪除</button>
@@ -117,9 +132,16 @@ const ordersRender = (data) => {
     `
   }) 
   ordersList.innerHTML = dataStr
+  
+  const checkboxs = document.querySelectorAll('input[type=checkbox]');
   const delBtns = document.querySelectorAll('.js-delBtn')
+  checkboxs.forEach(item => {
+    item.addEventListener('click', Event => {
+      putOrder(Event.target.getAttribute('data-orderID'), Event.target.checked)
+    })
+  })
   delBtns.forEach(item => {
-    item.addEventListener('click', (Event) => {
+    item.addEventListener('click', Event => {
       deleteOrder(Event.target.value)
     })
   })
