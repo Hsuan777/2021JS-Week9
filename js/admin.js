@@ -174,7 +174,7 @@ const highChartRender = orderData => {
       text: '全品項營收'
     },
     tooltip: {
-      pointFormat: '{series.name}:<b>{point.percentage:.1f}%</b>'
+      // pointFormat: '{series.name}:<b>{point.percentage:.1f}%</b>'
     },
     colors: colors,
     plotOptions: {
