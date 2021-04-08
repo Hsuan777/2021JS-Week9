@@ -66,19 +66,19 @@ const init = () => {
   getCarts();
 }
 // api 網址 行為
-const apiUrl = name => {
-  return `https://hexschoollivejs.herokuapp.com/api/livejs/v1/customer/vic/${name}`
-}
+// const apiUrl = name => {
+//   return `https://hexschoollivejs.herokuapp.com/api/livejs/v1/customer/vic/${name}`
+// }
 // get Data
 const getProducts = () => {
-  axios.get(apiUrl('products')).then(response => {
+  axios.get(`${apiUrl}/products`).then(response => {
     originProductsData = response.data.products ;
     categoryOptions() ;
     productsRender(originProductsData) ;
   })
 }
 const getCarts = () => {
-  axios.get(apiUrl('carts')).then(response => {
+  axios.get(`${apiUrl}/carts`).then(response => {
     originCartsData = response.data.carts ;
     cartsRender(originCartsData, response.data.finalTotal) ;
   })
@@ -97,7 +97,7 @@ const postProduct = productID => {
         tempProduct.data.quantity = 1 ;
       }
     })
-    axios.post(apiUrl('carts'), tempProduct).then(response => {
+    axios.post(`${apiUrl}/carts`, tempProduct).then(response => {
       cartsRender(response.data.carts, response.data.finalTotal) ;
     })
   }
@@ -111,7 +111,7 @@ const postOrder = Event => {
   userObj.address = Event.target[3].value ;
   userObj.payment = Event.target[4].value ;
   if (cartsList.textContent !== ''){
-    axios.post(apiUrl('orders'), {data:{user:userObj}}).then(response => {
+    axios.post(`${apiUrl}/orders`, {data:{user:userObj}}).then(response => {
       if (response.status === 200) {
         cartsRender([], 0);
         Array.from(Event.target).forEach(item => {
@@ -132,12 +132,12 @@ const patchProduct = (catrsID, quantity, action) => {
   tempProduct.data.id = catrsID ;
   if (action === "+"){
     tempProduct.data.quantity = quantity*1 + 1 ;
-    axios.patch(apiUrl('carts'), tempProduct).then(response => {
+    axios.patch(`${apiUrl}/carts`, tempProduct).then(response => {
       cartsRender(response.data.carts, response.data.finalTotal) ;
     })
   } else if (action === "-" && quantity !== "1"){
     tempProduct.data.quantity = quantity - 1 ;
-    axios.patch(apiUrl('carts'), tempProduct).then(response => {
+    axios.patch(`${apiUrl}/carts`, tempProduct).then(response => {
       cartsRender(response.data.carts, response.data.finalTotal) ;
     })
   }
@@ -148,11 +148,11 @@ const deleteProduct = (cartsID) => {
   if (cartsID === 'clearAll' && cartsList.textContent === '') {
     return
   } else if (cartsID === 'clearAll' && cartsList.textContent !== '') {
-    axios.delete(apiUrl('carts')).then(response => {
+    axios.delete(`${apiUrl}/carts`).then(response => {
       cartsRender(originCartsData, response.data.finalTotal) ;
     }) 
   } else {
-    axios.delete(`${apiUrl('carts')}/${cartsID}`).then(response => {
+    axios.delete(`${apiUrl}/carts/${cartsID}`).then(response => {
       cartsRender(response.data.carts, response.data.finalTotal) ;
     })
   }
