@@ -7,6 +7,7 @@ const submitOrder = document.querySelector('.js-submitOrder') ;
 const inputs = document.querySelectorAll("input[type=text],input[type=number],input[type=email],select[name=clientPay]") ;
 
 /* set 變數與初始值 */
+const apiUrl = 'https://hexschoollivejs.herokuapp.com/api/livejs/v1/customer/vic'
 let originProductsData = [] ;
 let originCartsData = [] ;
 
@@ -219,37 +220,18 @@ const cartsRender = (data, totalMoney) => {
       <td>${formatPrice(item.product.price)}</td>
       <td>
         <div class="d-flex justify-content-around align-items-center">
-          <button type="button" value="${item.id}" class="js-qtDown btn btn-light">-</button>
-          <button class="btn btn-light">${item.quantity}</button>
-          <button type="button" value="${item.id}" class="js-qtUp btn btn-light">+</button>
+          <button type="button" value="${item.id}" class="js-qtDown btn btn-light" data-action="down">-</button>
+          <button class="btn btn-light" data-quantity="${item.quantity}">${item.quantity}</button>
+          <button type="button" value="${item.id}" class="js-qtUp btn btn-light" data-action="up">+</button>
         </div>
       </td>
       <td>${formatPrice(item.product.price * item.quantity)}</td>
-      <td><button type="button" value="${item.id}" class="js-delBtn btn btn-light">X</button></td>
+      <td><button type="button" value="${item.id}" class="js-delBtn btn btn-light" data-action="delete">X</button></td>
     </tr>
     ` ;
   })
   cartsList.innerHTML = dataStr ;
-  finalTotal.textContent = `NT$${formatPrice(totalMoney)}`
-  const delBtns = document.querySelectorAll('.js-delBtn')
-  const qtDown = document.querySelectorAll('.js-qtDown');
-  const qtUp = document.querySelectorAll('.js-qtUp');
-  delBtns.forEach(item => {
-    item.addEventListener('click', Event => {
-      deleteProduct(Event.target.value)
-    })
-  })
-  qtDown.forEach(item => {
-    item.addEventListener('click', Event => {
-      patchProduct(Event.target.value, item.nextElementSibling.textContent, "-")
-    })
-  })
-  qtUp.forEach(item => {
-    item.addEventListener('click', Event => {
-      patchProduct(Event.target.value, item.previousElementSibling.textContent, "+")
-    })
-  })
-  
+  finalTotal.textContent = `NT$${formatPrice(totalMoney)}` ;
 }
 
 // 數字千分位
@@ -318,6 +300,22 @@ productsCategory.addEventListener('change', Event => {
       }
     })
     productsRender(tempData) ;
+  }
+})
+
+cartsList.addEventListener('click', Event => {
+  switch (Event.target.dataset.action) {
+    case 'down':
+      patchProduct(Event.target.value, Event.target.nextElementSibling.dataset.quantity, "-")
+      break;
+    case 'up':
+      patchProduct(Event.target.value, Event.target.previousElementSibling.dataset.quantity, "+")
+      break;
+    case 'delete':
+      deleteProduct(Event.target.value)
+      break;
+    case undefined:
+      return  
   }
 })
 
