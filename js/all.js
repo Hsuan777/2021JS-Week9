@@ -1,20 +1,20 @@
 /* get DOM */
-const productsList = document.querySelector('.js-productsList');
-const productsCategory = document.querySelector('.js-productsCategory');
-const cartsList = document.querySelector('.js-cartsList');
-const finalTotal = document.querySelector('.js-finalTotal');
-const submitOrder = document.querySelector('.js-submitOrder');
-const inputs = document.querySelectorAll("input[type=text],input[type=number],input[type=email],select[name=clientPay]");
+const productsList = document.querySelector('.js-productsList') ;
+const productsCategory = document.querySelector('.js-productsCategory') ;
+const cartsList = document.querySelector('.js-cartsList') ;
+const finalTotal = document.querySelector('.js-finalTotal') ;
+const submitOrder = document.querySelector('.js-submitOrder') ;
+const inputs = document.querySelectorAll("input[type=text],input[type=number],input[type=email],select[name=clientPay]") ;
 
 /* set 變數與初始值 */
-let originProductsData = []
-let originCartsData = []
+let originProductsData = [] ;
+let originCartsData = [] ;
 
 // validate 表單驗證條件與錯誤訊息 
 const constraints = {
   clientName: {
     presence: {
-      message: "請輸入姓名"
+      message: "請輸入姓名",
     },
     length: {
       minimum: 2,
@@ -23,7 +23,7 @@ const constraints = {
   },
   clientPhone: {
     presence: {
-      message: "請輸入電話"
+      message: "請輸入電話",
     },
     length: {
       minimum: 10,
@@ -31,20 +31,20 @@ const constraints = {
     },
     format: {
       pattern: "[0-9]+",
-      message: "請輸入正確的電話號碼"
+      message: "請輸入正確的電話號碼",
     }
   },
   clientEmail: {
     presence: {
-      message: "請輸入電子信箱"
+      message: "請輸入電子信箱",
     },
     email: {
-      message: "請輸入正確的電子信箱"
+      message: "請輸入正確的電子信箱",
     },
   },
   clientAddress: {
     presence: {
-      message: "請輸入寄送地址"
+      message: "請輸入寄送地址",
     },
     length: {
       minimum: 10,
@@ -53,7 +53,7 @@ const constraints = {
   },
   clientPay: {
     presence: {
-      message: "請選擇交易方式"
+      message: "請選擇交易方式",
     },
   }
 }
@@ -61,8 +61,8 @@ const constraints = {
 /* function */
 // 資料初始化
 const init = () => {
-  getProducts()
-  getCarts()
+  getProducts();
+  getCarts();
 }
 // api 網址 行為
 const apiUrl = name => {
@@ -71,53 +71,53 @@ const apiUrl = name => {
 // get Data
 const getProducts = () => {
   axios.get(apiUrl('products')).then(response => {
-    originProductsData = response.data.products
-    categoryOptions()
-    productsRender(originProductsData)
+    originProductsData = response.data.products ;
+    categoryOptions() ;
+    productsRender(originProductsData) ;
   })
 }
 const getCarts = () => {
   axios.get(apiUrl('carts')).then(response => {
-    originCartsData = response.data.carts
-    cartsRender(originCartsData, response.data.finalTotal)
+    originCartsData = response.data.carts ;
+    cartsRender(originCartsData, response.data.finalTotal) ;
   })
 }
 
 // post Data
 const postProduct = productID => {
-  let tempProduct = {data:{}}
+  let tempProduct = {data:{}} ;
   let cartsHas = originCartsData.find(item => {
-    return item.product.id === productID
+    return item.product.id === productID ;
   });
   if (cartsHas === undefined) {
     originProductsData.forEach(item => {
       if (item.id === productID){
-        tempProduct.data.productId = productID
-        tempProduct.data.quantity = 1
+        tempProduct.data.productId = productID ;
+        tempProduct.data.quantity = 1 ;
       }
     })
     axios.post(apiUrl('carts'), tempProduct).then(response => {
-      cartsRender(response.data.carts, response.data.finalTotal)
+      cartsRender(response.data.carts, response.data.finalTotal) ;
     })
   }
 }
 
 const postOrder = Event => {
-  let userObj = {}
-  userObj.name    = Event.target[0].value;
-  userObj.tel     = Event.target[1].value;
-  userObj.email   = Event.target[2].value;
-  userObj.address = Event.target[3].value;
-  userObj.payment = Event.target[4].value;
+  let userObj = {} ;
+  userObj.name    = Event.target[0].value ;
+  userObj.tel     = Event.target[1].value ;
+  userObj.email   = Event.target[2].value ;
+  userObj.address = Event.target[3].value ;
+  userObj.payment = Event.target[4].value ;
   if (cartsList.textContent !== ''){
     axios.post(apiUrl('orders'), {data:{user:userObj}}).then(response => {
       if (response.status === 200) {
-        cartsRender([], 0)
+        cartsRender([], 0);
         Array.from(Event.target).forEach(item => {
           if (item.value === '送出預訂資料'){
-            item.value = '送出預訂資料';
+            item.value = '送出預訂資料' ;
           } else {
-            item.value = '';
+            item.value = '' ;
           }
         })
       }
@@ -127,17 +127,17 @@ const postOrder = Event => {
 
 // patch carts
 const patchProduct = (catrsID, quantity, action) => {
-  let tempProduct = {data:{}}
-  tempProduct.data.id = catrsID
+  let tempProduct = {data:{}} ;
+  tempProduct.data.id = catrsID ;
   if (action === "+"){
-    tempProduct.data.quantity = quantity*1 + 1
+    tempProduct.data.quantity = quantity*1 + 1 ;
     axios.patch(apiUrl('carts'), tempProduct).then(response => {
-      cartsRender(response.data.carts, response.data.finalTotal)
+      cartsRender(response.data.carts, response.data.finalTotal) ;
     })
   } else if (action === "-" && quantity !== "1"){
-    tempProduct.data.quantity = quantity - 1
+    tempProduct.data.quantity = quantity - 1 ;
     axios.patch(apiUrl('carts'), tempProduct).then(response => {
-      cartsRender(response.data.carts, response.data.finalTotal)
+      cartsRender(response.data.carts, response.data.finalTotal) ;
     })
   }
 }
@@ -148,11 +148,11 @@ const deleteProduct = (cartsID) => {
     return
   } else if (cartsID === 'clearAll' && cartsList.textContent !== '') {
     axios.delete(apiUrl('carts')).then(response => {
-      cartsRender(originCartsData, response.data.finalTotal)
+      cartsRender(originCartsData, response.data.finalTotal) ;
     }) 
   } else {
     axios.delete(`${apiUrl('carts')}/${cartsID}`).then(response => {
-      cartsRender(response.data.carts, response.data.finalTotal)
+      cartsRender(response.data.carts, response.data.finalTotal) ;
     })
   }
 }
@@ -160,7 +160,7 @@ const deleteProduct = (cartsID) => {
 // 渲染畫面
 // 產品清單
 const productsRender = data => {
-  let dataStr = ``
+  let dataStr = '' ;
   data.forEach(item => {
     dataStr += `
     <li class="col">
@@ -176,37 +176,37 @@ const productsRender = data => {
           <p class="h4">${formatPrice(item.price)}</p>
         </div>
       </div>
-    </li>`
+    </li>` ;
   })
-  productsList.innerHTML = dataStr;
-  const addCartsBtns = document.querySelectorAll('.js-addCartsBtn')
+  productsList.innerHTML = dataStr ;
+  const addCartsBtns = document.querySelectorAll('.js-addCartsBtn') ;
   addCartsBtns.forEach(item => {
-    item.addEventListener('click', (Event)=>{
-      postProduct(Event.target.value)
+    item.addEventListener('click', Event => {
+      postProduct(Event.target.value) ;
     })
   })
 }
 
 // 類別清單
 const categoryOptions = () => { 
-  let selectOptions = ``
-  let tempCategory = {}
+  let selectOptions = '' ;
+  let tempCategory = {} ;
   originProductsData.forEach(item => {
     if (tempCategory[item.category] === undefined){
-      tempCategory[item.category] = 1
+      tempCategory[item.category] = 1 ;
     } else {
-      tempCategory[item.category] += 1
+      tempCategory[item.category] += 1 ;
     }
   })
   Object.keys(tempCategory).forEach(item => {
-    selectOptions += `<option value="${item}">${item}</option>`
+    selectOptions += `<option value="${item}">${item}</option>` ;
   })
-  productsCategory.innerHTML = '<option value="all" selected>全部</option>' + selectOptions 
+  productsCategory.innerHTML = '<option value="all" selected>全部</option>' + selectOptions ;
 }
 
 // 購物車清單
 const cartsRender = (data, totalMoney) => {
-  let dataStr = ``
+  let dataStr = '' ;
   data.forEach(item => {
     dataStr += `
     <tr>
@@ -227,9 +227,9 @@ const cartsRender = (data, totalMoney) => {
       <td>${formatPrice(item.product.price * item.quantity)}</td>
       <td><button type="button" value="${item.id}" class="js-delBtn btn btn-light">X</button></td>
     </tr>
-    `
+    ` ;
   })
-  cartsList.innerHTML = dataStr
+  cartsList.innerHTML = dataStr ;
   finalTotal.textContent = `NT$${formatPrice(totalMoney)}`
   const delBtns = document.querySelectorAll('.js-delBtn')
   const qtDown = document.querySelectorAll('.js-qtDown');
@@ -254,22 +254,22 @@ const cartsRender = (data, totalMoney) => {
 
 // 數字千分位
 const formatPrice = numStr => {
-  return numStr.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+  return numStr.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") ;
 }
 
 // 預設執行
-init()
+init() ;
 
-// 監聽事件
+/* 監聽事件 */
 // 在 DOM 結構被完整的讀取跟解析後，執行函式內動作
 document.addEventListener('DOMContentLoaded', () => {
-    const recommendDOM = document.querySelector('.custom__recommend')
+    const recommendDOM = document.querySelector('.custom__recommend') ;
     // 變更滑鼠游標樣式
-    recommendDOM.style.cursor = 'grab';
+    recommendDOM.style.cursor = 'grab' ;
     // 定義與紀錄目前滑鼠 x y 座標與捲軸拉條至最左側距離
-    let pos = { top: 0, left: 0, x: 0, y: 0 };
+    let pos = { top: 0, left: 0, x: 0, y: 0 } ;
     const mouseDownHandler = Event => {
-        recommendDOM.style.cursor = 'grabbing';
+        recommendDOM.style.cursor = 'grabbing' ;
         pos = {
           // 取得元素之 X 軸與最左側與上端距離
           left: recommendDOM.scrollLeft,
@@ -279,45 +279,45 @@ document.addEventListener('DOMContentLoaded', () => {
           y: Event.clientY,
         };
         // 當滑鼠按下時，開始監聽滑鼠拖動與放開事件
-        document.addEventListener('mousemove', mouseMoveHandler);
-        document.addEventListener('mouseup', mouseUpHandler);
+        document.addEventListener('mousemove', mouseMoveHandler) ;
+        document.addEventListener('mouseup', mouseUpHandler) ;
     };
     const mouseMoveHandler = Event => {
         // 滑鼠移動距離 = 滑鼠移動時的座標 - 已記錄的滑鼠座標
-        let dx = Event.clientX - pos.x;
-        let dy = Event.clientY - pos.y;
+        let dx = Event.clientX - pos.x ;
+        let dy = Event.clientY - pos.y ;
 
         // 變更捲軸位置，已記錄的捲軸拉條左邊頂端位置 - 滑鼠移動距離
         // 舉例 : 拉條初始值為 0 ，滑鼠按下往左移動 -50，相對拉條往右移動 +50
-        recommendDOM.scrollTop = pos.top - dy;
-        recommendDOM.scrollLeft = pos.left - dx;
+        recommendDOM.scrollTop = pos.top - dy ;
+        recommendDOM.scrollLeft = pos.left - dx ;
     };
     const mouseUpHandler = () => {
-        recommendDOM.style.cursor = 'grab';
+        recommendDOM.style.cursor = 'grab' ;
         // 當滑鼠放開時，移除滑鼠移動與放開事件
-        document.removeEventListener('mousemove', mouseMoveHandler);
-        document.removeEventListener('mouseup', mouseUpHandler);
+        document.removeEventListener('mousemove', mouseMoveHandler) ;
+        document.removeEventListener('mouseup', mouseUpHandler) ;
     };
     // 監聽滑鼠按下事件
-    recommendDOM.addEventListener('mousedown', mouseDownHandler);
+    recommendDOM.addEventListener('mousedown', mouseDownHandler) ;
 });
 
 submitOrder.addEventListener('submit', Event => {
-  Event.preventDefault();
-  postOrder(Event);
+  Event.preventDefault() ;
+  postOrder(Event) ;
 })
 
 productsCategory.addEventListener('change', Event => {
-  let tempData = [];
+  let tempData = [] ;
   if (Event.target.value === 'all') {
-    productsRender(originProductsData);
+    productsRender(originProductsData) ;
   } else {
     originProductsData.forEach(item => {
       if (item.category === Event.target.value){
-        tempData.push(item);
+        tempData.push(item) ;
       }
     })
-    productsRender(tempData);
+    productsRender(tempData) ;
   }
 })
 

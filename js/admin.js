@@ -1,20 +1,20 @@
 /* get DOM */
-const ordersList = document.querySelector('.js-ordersList');
-const tokenDisplay = document.querySelector('.js-tokenDisplay');
-const tokenInput = document.querySelector('.js-tokenInput');
-const pathInput = document.querySelector('.js-pathInput');
-const tokenSubmit = document.querySelector('.js-tokenSubmit');
-const errorMsg = document.querySelector('.js-errorMsg');
-const orderDisplay = document.querySelector('.js-orderDisplay');
-const chartDisplay = document.getElementById('highChart')
-const signOut = document.querySelector('.js-signOut');
+const ordersList = document.querySelector('.js-ordersList') ;
+const tokenDisplay = document.querySelector('.js-tokenDisplay') ;
+const tokenInput = document.querySelector('.js-tokenInput') ;
+const pathInput = document.querySelector('.js-pathInput') ;
+const tokenSubmit = document.querySelector('.js-tokenSubmit') ;
+const errorMsg = document.querySelector('.js-errorMsg') ;
+const orderDisplay = document.querySelector('.js-orderDisplay') ;
+const chartDisplay = document.getElementById('highChart') ;
+const signOut = document.querySelector('.js-signOut') ;
 
 /* set 變數與初始值 */
-const apiUrl = 'https://hexschoollivejs.herokuapp.com/api/livejs/v1/admin';
-let token = '';
-let apiPath = '';
-let originOrdersData = []
-let totalProductsData = {}
+const apiUrl = 'https://hexschoollivejs.herokuapp.com/api/livejs/v1/admin' ;
+let token = '' ;
+let apiPath = '' ;
+let originOrdersData = [] ;
+let totalProductsData = {} ;
 
 /* function */
 // get Data
@@ -29,17 +29,18 @@ const getOrder = () => {
     highChartRender(originOrdersData)
   }).catch(error => {
     if (error) {
-      tokenDisplay.classList.remove('d-none')
-      errorMsg.textContent = 'Input Error'
-      document.cookie = 'hexToken=; expires=; path=/'
-      document.cookie = 'hexPath=; expires=; path=/'
+      tokenDisplay.classList.remove('d-none') ;
+      errorMsg.textContent = 'Input Error' ;
+      document.cookie = 'hexToken=; expires=; path=/' ;
+      document.cookie = 'hexPath=; expires=; path=/' ;
     }
   })
 }
 
 const getProducts = () => {
-  axios.get(`https://hexschoollivejs.herokuapp.com/api/livejs/v1/customer/${apiPath}/products`).then(response => {
-    let productsData = response.data.products
+  axios.get(`https://hexschoollivejs.herokuapp.com/api/livejs/v1/customer/${apiPath}/products`)
+  .then(response => {
+    let productsData = response.data.products ;
     // 列出所有商品 ID，以利後續圖表整合
     productsData.forEach(item => {
       if (totalProductsData[item.id] === undefined){
@@ -52,10 +53,10 @@ const getProducts = () => {
     })
   }).catch(error => {
     if (error) {
-      tokenDisplay.classList.remove('d-none')
-      errorMsg.textContent = 'Input Error'
-      document.cookie = 'hexToken=; expires=; path=/'
-      document.cookie = 'hexPath=; expires=; path=/'
+      tokenDisplay.classList.remove('d-none') ;
+      errorMsg.textContent = 'Input Error' ;
+      document.cookie = 'hexToken=; expires=; path=/' ;
+      document.cookie = 'hexPath=; expires=; path=/' ;
     }
   })
 }
@@ -64,7 +65,7 @@ const getProducts = () => {
 const putOrder = (orderID, bool) => { 
   let orderData = {data:{id: orderID, paid: bool}}
   axios.put(`${apiUrl}/${apiPath}/orders`, orderData, {headers:{Authorization:token}}).then(response => {
-    ordersRender(response.data.orders)
+    ordersRender(response.data.orders) ;
   })
 }
 // delete Data
@@ -73,22 +74,22 @@ const deleteOrder = (ordersID) => {
     return
   } else if (ordersID === 'clearAll' && ordersList.textContent !== '') {
     axios.delete(`${apiUrl}/${apiPath}/orders`, {headers:{Authorization:token}}).then(response => {
-      ordersRender(response.data.orders)
-      highChartRender(response.data.orders)
+      ordersRender(response.data.orders) ;
+      highChartRender(response.data.orders) ;
     }) 
   } else {
     axios.delete(`${apiUrl}/${apiPath}/orders/${ordersID}`, {headers:{Authorization:token}}).then(response => {
-      ordersRender(response.data.orders)
-      highChartRender(response.data.orders)
+      ordersRender(response.data.orders) ;
+      highChartRender(response.data.orders) ;
     })
   }
 }
 
 const ordersRender = (data) => { 
-  let dataStr = ``;
+  let dataStr = '' ;
   data.forEach((item, index) => {
-    let otherProductsStr = ``
-    let moreStr = ``
+    let otherProductsStr = '' ;
+    let moreStr = '' ;
     if (item.products[1]) {
       moreStr = `
       <a class="btn btn-primary" data-bs-toggle="collapse" href="#collapse${index}" role="button" aria-expanded="false" aria-controls="collapse${index}">
@@ -97,7 +98,7 @@ const ordersRender = (data) => {
     }
     item.products.forEach((productItem, index) => {
       if (item.products[1] && index !== 0)
-      otherProductsStr += `<p class="mb-0">${productItem.title}</p>`
+      otherProductsStr += `<p class="mb-0">${productItem.title}</p>` ;
     }) 
     dataStr += `
     <tr>
@@ -131,32 +132,32 @@ const ordersRender = (data) => {
     </tr>   
     `
   }) 
-  ordersList.innerHTML = dataStr
+  ordersList.innerHTML = dataStr ;
   
-  const checkboxs = document.querySelectorAll('input[type=checkbox]');
-  const delBtns = document.querySelectorAll('.js-delBtn')
+  const checkboxs = document.querySelectorAll('input[type=checkbox]') ;
+  const delBtns = document.querySelectorAll('.js-delBtn') ;
   checkboxs.forEach(item => {
     item.addEventListener('click', Event => {
-      putOrder(Event.target.getAttribute('data-orderID'), Event.target.checked)
+      putOrder(Event.target.getAttribute('data-orderID'), Event.target.checked) ;
     })
   })
   delBtns.forEach(item => {
     item.addEventListener('click', Event => {
-      deleteOrder(Event.target.value)
+      deleteOrder(Event.target.value) ;
     })
   })
 }
 
 // highChart.js
 const highChartRender = orderData => {
-  let tempData = []
+  let tempData = [] ;
   // 將訂單資料的商品 ID 數量整合
   orderData.forEach(orderItem => {
     orderItem.products.forEach(item => {
-      totalProductsData[item.id].totalQuantity += item.quantity
+      totalProductsData[item.id].totalQuantity += item.quantity ;
     })
   })
-  tempData = Object.keys(totalProductsData)
+  tempData = Object.keys(totalProductsData) ;
   tempData.map((item, index) =>{
     tempData[index] = {name:totalProductsData[item].title, y:totalProductsData[item].price*totalProductsData[item].totalQuantity}
     return
@@ -198,64 +199,64 @@ const highChartRender = orderData => {
     credits: {
       enabled: false
   	}
-  });
+  }) ;
 }
 
 // 資料給的是秒數，而非毫秒數
 const formatDate = (time) => {
-  let date = new Date(time)
-  return `${date.getFullYear()}/${date.getMonth()+1}/${date.getDate()}` 
+  let date = new Date(time) ;
+  return `${date.getFullYear()}/${date.getMonth()+1}/${date.getDate()}` ;
 }
 
 // 將 token 存入 cookie
 tokenSubmit.addEventListener('click', () => {
   if (pathInput.value !== "" && tokenInput.value !== ""){
-    token = tokenInput.value
-    apiPath = pathInput.value
-    document.cookie = `hexToken=${token}; expires=${new Date().getTime()*10}; path=/`
-    document.cookie = `hexPath=${apiPath}; expires=${new Date().getTime()*10}; path=/`
-    tokenInput.value = ''
-    pathInput.value = ''
-    getOrder()
-    getProducts()
+    token = tokenInput.value ;
+    apiPath = pathInput.value ;
+    document.cookie = `hexToken=${token}; expires=${new Date().getTime()*10}; path=/` ;
+    document.cookie = `hexPath=${apiPath}; expires=${new Date().getTime()*10}; path=/` ;
+    tokenInput.value = '' ;
+    pathInput.value = '' ;
+    getOrder() ;
+    getProducts() ;
   } 
 })
 
 // 暫存 patch 與 token
-tokenInput.addEventListener('keydown', (Event) => {
+tokenInput.addEventListener('keydown', Event => {
   if (Event.key === 'Enter' && pathInput.value !== '' && tokenInput.value !== ''){
-    token = tokenInput.value
-    apiPath = pathInput.value
-    document.cookie = `hexToken=${token}; expires=${new Date().getTime()*10}; path=/`
-    document.cookie = `hexPath=${apiPath}; expires=${new Date().getTime()*10}; path=/`
-    tokenInput.value = ''
-    getOrder()
-    getProducts()
+    token = tokenInput.value ;
+    apiPath = pathInput.value ;
+    document.cookie = `hexToken=${token}; expires=${new Date().getTime()*10}; path=/` ;
+    document.cookie = `hexPath=${apiPath}; expires=${new Date().getTime()*10}; path=/` ;
+    tokenInput.value = '' ;
+    getOrder() ;
+    getProducts() ;
   } 
 })
 
 
 // 登出並清除 cookie
 signOut.addEventListener('click', () => {
-  document.cookie = 'hexToken=; expires=; path=/'
-  document.cookie = 'hexPath=; expires=; path=/'
-  tokenDisplay.classList.remove('d-none')
-  orderDisplay.classList.add('d-none')
-  chartDisplay.classList.add('d-none')
-  errorMsg.textContent = ''
-  originOrdersData = []
-  totalProductsData = {}
-  ordersRender(originOrdersData)
-  highChartRender(originOrdersData)
-  window.location.replace('./index.html')
+  document.cookie = 'hexToken=; expires=; path=/' ;
+  document.cookie = 'hexPath=; expires=; path=/' ;
+  tokenDisplay.classList.remove('d-none') ;
+  orderDisplay.classList.add('d-none') ;
+  chartDisplay.classList.add('d-none') ;
+  errorMsg.textContent = '' ;
+  originOrdersData = [] ;
+  totalProductsData = {} ;
+  ordersRender(originOrdersData) ;
+  highChartRender(originOrdersData) ;
+  window.location.replace('./index.html') ;
 })
 
 // 進入頁面時從 cookie 取出 token
-token = document.cookie.replace(/(?:(?:^|.*;\s*)hexToken\s*=\s*([^;]*).*$)|^.*$/, '$1');
-apiPath = document.cookie.replace(/(?:(?:^|.*;\s*)hexPath\s*=\s*([^;]*).*$)|^.*$/, '$1');
+token = document.cookie.replace(/(?:(?:^|.*;\s*)hexToken\s*=\s*([^;]*).*$)|^.*$/, '$1') ;
+apiPath = document.cookie.replace(/(?:(?:^|.*;\s*)hexPath\s*=\s*([^;]*).*$)|^.*$/, '$1') ;
 if (token && apiPath) {
-  getOrder()
-  getProducts()
+  getOrder() ;
+  getProducts() ;
 } else {
-  tokenDisplay.classList.remove('d-none')
+  tokenDisplay.classList.remove('d-none') ;
 }
