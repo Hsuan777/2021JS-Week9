@@ -10133,6 +10133,42 @@ td, th {
   height: 80px;
 }
 
+.custom__recommend {
+  cursor: pointer;
+  overflow-x: scroll;
+  user-select: none;
+  -moz-user-select: none;
+  -webkit-user-drag: none;
+  -webkit-user-select: none;
+  -ms-user-select: none;
+}
+
+.custom__recommend::-webkit-scrollbar {
+  display: none;
+}
+
+.custom__recommend img {
+  user-select: none;
+  -moz-user-select: none;
+  -webkit-user-drag: none;
+  -webkit-user-select: none;
+  -ms-user-select: none;
+}
+
+.custom__recommend__authorImg {
+  width: 45px;
+  height: 45px;
+}
+
+.custom__recommend__productImg {
+  width: 95px;
+  height: 95px;
+}
+
+.custom__recommend__top {
+  transform: translateX(95px);
+}
+
 .switch {
   position: relative;
   display: inline-block;
