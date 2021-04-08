@@ -10099,8 +10099,17 @@ fieldset:disabled .btn {
   }
 }
 
+body {
+  overflow-x: hidden;
+}
+
 td, th {
   vertical-align: middle;
+}
+
+img {
+  width: 100%;
+  object-fit: cover;
 }
 
 .custom__tranSport > li {
@@ -10117,6 +10126,12 @@ td, th {
   border-color: transparent transparent transparent black;
   top: 50px;
   right: -5px;
+}
+
+@media (max-width: 991.98px) {
+  .custom__tranSport > li:nth-child(2)::after {
+    border-color: transparent;
+  }
 }
 
 .custom__tranSport > li:last-child::after {

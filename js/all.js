@@ -164,11 +164,9 @@ const productsRender = data => {
   data.forEach(item => {
     dataStr += `
     <li class="col">
-      <div class="card border-0 h-100">
+      <div class="card border-0 rounded-0 h-100">
         <div class="position-relative">
-          <a href="">
-            <img src="${item.images}" class="card-img-top" alt="...">
-          </a>
+          <img src="${item.images}" class="card-img-top" alt="${item.title}">
           <p class="position-absolute top-0 end-0 translate-middle-y bg-secondary rounded-start p-3 text-white">新品</p>
         </div>
         <div class="card-body p-0">

@@ -5,6 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" href="https://pro.fontawesome.com/releases/v5.10.0/css/all.css" integrity="sha384-AYmEC3Yw5cVb3ZcuHtOA93w35dYTsvhLPVnYs9eStHfGJvOvKxVfELGroGkvsg+p" crossorigin="anonymous"/>
   <link rel="preconnect" href="https://fonts.gstatic.com"> 
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Crimson+Pro&family=Literata">
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/all.css">
   <title>WOWOROOM</title>
@@ -113,11 +115,11 @@
       <div class="container p-3">
         <h2 id="recommend" class="text-center text-white fw-bolder mb-3">好評推薦</h2>
         <div class="custom__recommend">
-          <ul class="custom__recommend__top row row-cols-3 list-unstyled flex-nowrap">
+          <ul class="custom__recommend__top row row-cols-1 row-cols-md-2 row-cols-lg-3 list-unstyled flex-nowrap">
             <li class="col">
               <div class="d-flex align-items-center bg-white">
                 <!-- 購買商品圖 -->
-                <img src="https://i.imgur.com/cXcOLhu.png" alt="" class="me-2">
+                <img src="https://i.imgur.com/cXcOLhu.png" alt="" class="custom__recommend__productImg me-2">
                 <!-- 購買人資訊 -->
                 <div class="d-flex flex-column">
                   <!-- 購買人頭像與商品名稱 -->
@@ -195,7 +197,7 @@
               </div>
             </li>
           </ul>
-          <ul class="row row-cols-3 list-unstyled flex-nowrap">
+          <ul class="row row-cols-1 row-cols-md-2 row-cols-lg-3 list-unstyled flex-nowrap">
             <li class="col">
               <div class="d-flex align-items-center bg-white">
                 <!-- 購買商品圖 -->
@@ -287,34 +289,34 @@
       <h2 id="transport" class="text-center fw-bolder mb-3">運送方式</h2>
       <div class="row">
         <div class="col-8 mx-auto">
-          <ul class="custom__tranSport row row-cols-4 list-unstyled">
+          <ul class="custom__tranSport row row-cols-2 row-cols-lg-4 list-unstyled">
             <li class="col d-flex flex-column align-items-center">
               <div class="custom__tranSport__icon d-flex justify-content-center align-items-center rounded-circle border border-dark mb-2">
-                <i class="fas fa-shopping-cart h2 mb-0"></i>
+                <span class="material-icons h1 mb-0">shopping_cart</span>
               </div>
-              <p>STEP.1</p>
-              <p>選購商品</p>
+              <h4 class="fw-bolder">STEP.1</h4>
+              <p class="fw-bolder">選購商品</p>
             </li>
             <li class="col d-flex flex-column align-items-center">
               <div class="custom__tranSport__icon d-flex justify-content-center align-items-center rounded-circle border border-dark mb-2">
-                <i class="fas fa-info h2 mb-0"></i>
+                <span class="material-icons h1 mb-0">format_list_bulleted</span>
               </div>
-              <p>STEP.2</p>
-              <p>填寫預定資料</p>
+              <h4 class="fw-bolder">STEP.2</h4>
+              <p class="fw-bolder">填寫預定資料</p>
             </li>
             <li class="col d-flex flex-column align-items-center">
               <div class="custom__tranSport__icon d-flex justify-content-center align-items-center rounded-circle border border-dark mb-2">
-                <i class="fas fa-check h2 mb-0"></i>
+                <span class="material-icons h1 mb-0">local_post_office</span>
               </div>
-              <p>STEP.3</p>
-              <p>預定成功</p>
+              <h4 class="fw-bolder">STEP.3</h4>
+              <p class="fw-bolder">預定成功</p>
             </li>
             <li class="col d-flex flex-column align-items-center">
               <div class="custom__tranSport__icon d-flex justify-content-center align-items-center rounded-circle border border-dark mb-2">
-                <i class="fas fa-envelope h2 mb-0"></i>
+                <span class="material-icons h1 mb-0">done</span>
               </div>
-              <p>STEP.4</p>
-              <p>Email 付款資訊</p>
+              <h4 class="fw-bolder">STEP.4</h4>
+              <p class="fw-bolder">Email 付款資訊</p>
             </li>
           </ul>
         </div>
@@ -330,28 +332,30 @@
       <h2 class="text-center fw-bolder">我的購物車</h2>
       <div class="container">
         <div class="row">
-          <div class="col-8 mx-auto">
-            <table class="table">
-              <thead>
-                <tr>
-                  <th class="border-0">品項</th>
-                  <th class="border-0">單價</th>
-                  <th class="border-0 text-center">數量</th>
-                  <th class="border-0">金額</th>
-                  <th class="border-0"></th>
-                </tr>
-              </thead>
-              <tbody class="js-cartsList"></tbody>
-              <tfooter>
-                <tr>
-                  <th colspan="3" class="border-0">
-                    <button type="button" value="clearAll" class="js-delBtn btn btn-white border-dark">刪除所有品項</button>
-                  </th>
-                  <th class="border-0">總金額</th>
-                  <th class="js-finalTotal border-0"></th>
-                </tr>
-              </tfooter>
-            </table>
+          <div class="col col-md-8 mx-auto">
+            <div class="table-responsive">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th class="border-0">品項</th>
+                    <th class="border-0">單價</th>
+                    <th class="border-0 text-center">數量</th>
+                    <th class="border-0">金額</th>
+                    <th class="border-0"></th>
+                  </tr>
+                </thead>
+                <tbody class="js-cartsList"></tbody>
+                <tfooter>
+                  <tr>
+                    <th colspan="3" class="border-0">
+                      <button type="button" value="clearAll" class="js-delBtn btn btn-white border-dark">刪除所有品項</button>
+                    </th>
+                    <th class="border-0">總金額</th>
+                    <th class="js-finalTotal border-0"></th>
+                  </tr>
+                </tfooter>
+              </table>
+            </div>
           </div>
         </div>
       </div>
@@ -361,7 +365,7 @@
     <section class="container py-5">
       <h2 id="order" class="text-center fw-bolder mb-3">填寫預訂資料</h2>
       <div class="row">
-        <div class="col-4 mx-auto">
+        <div class="col col-md-6 col-lg-4 mx-auto">
           <form action=""class="js-submitOrder">
             <div class="mb-3">
               <label for="clientName" class="form-label">姓名</label>
