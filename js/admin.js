@@ -69,7 +69,7 @@ const putOrder = (orderID, bool) => {
   })
 }
 // delete Data
-const deleteOrder = (ordersID) => { 
+const deleteOrder = ordersID => { 
   if (ordersID === 'clearAll' && ordersList.textContent === '') {
     return
   } else if (ordersID === 'clearAll' && ordersList.textContent !== '') {
@@ -85,7 +85,7 @@ const deleteOrder = (ordersID) => {
   }
 }
 
-const ordersRender = (data) => { 
+const ordersRender = data => { 
   let dataStr = '' ;
   data.forEach((item, index) => {
     let otherProductsStr = '' ;
@@ -174,7 +174,7 @@ const highChartRender = orderData => {
       text: '全品項營收'
     },
     tooltip: {
-      pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
+      pointFormat: '{series.name}:<b>{point.percentage:.1f}%</b>'
     },
     colors: colors,
     plotOptions: {
@@ -193,7 +193,7 @@ const highChartRender = orderData => {
       categories: Object.keys(totalProductsData)
     },
     series: [{
-      name: '營收比例',
+      name: '實際營收',
       data: tempData
     }],
     credits: {
@@ -203,7 +203,7 @@ const highChartRender = orderData => {
 }
 
 // 資料給的是秒數，而非毫秒數
-const formatDate = (time) => {
+const formatDate = time => {
   let date = new Date(time) ;
   return `${date.getFullYear()}/${date.getMonth()+1}/${date.getDate()}` ;
 }
