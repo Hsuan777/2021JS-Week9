@@ -21,19 +21,17 @@ let totalProductsData = {} ;
 const getOrder = () => { 
   axios.get(`${apiUrl}/${apiPath}/orders`, {headers:{Authorization:token}})
   .then(response => {
-    tokenDisplay.classList.add('d-none')
-    orderDisplay.classList.remove('d-none')
-    chartDisplay.classList.remove('d-none')
-    originOrdersData = response.data.orders
-    ordersRender(originOrdersData)
-    highChartRender(originOrdersData)
-  }).catch(error => {
-    if (error) {
-      tokenDisplay.classList.remove('d-none') ;
-      errorMsg.textContent = 'Input Error' ;
-      document.cookie = 'hexToken=; expires=; path=/' ;
-      document.cookie = 'hexPath=; expires=; path=/' ;
-    }
+    tokenDisplay.classList.add('d-none') ;
+    orderDisplay.classList.remove('d-none') ;
+    chartDisplay.classList.remove('d-none') ;
+    originOrdersData = response.data.orders ;
+    ordersRender(originOrdersData) ;
+    highChartRender(originOrdersData) ;
+  }).catch(() => {
+    tokenDisplay.classList.remove('d-none') ;
+    errorMsg.textContent = 'Input Error' ;
+    document.cookie = 'hexToken=; expires=; path=/' ;
+    document.cookie = 'hexPath=; expires=; path=/' ;
   })
 }
 
@@ -47,17 +45,16 @@ const getProducts = () => {
         totalProductsData[item.id] = {
           title: item.title,
           price: item.price,
+          category: item.category,
           totalQuantity: 0
         }
       }
     })
-  }).catch(error => {
-    if (error) {
-      tokenDisplay.classList.remove('d-none') ;
-      errorMsg.textContent = 'Input Error' ;
-      document.cookie = 'hexToken=; expires=; path=/' ;
-      document.cookie = 'hexPath=; expires=; path=/' ;
-    }
+  }).catch(() => {
+    tokenDisplay.classList.remove('d-none') ;
+    errorMsg.textContent = 'Input Error' ;
+    document.cookie = 'hexToken=; expires=; path=/' ;
+    document.cookie = 'hexPath=; expires=; path=/' ;
   })
 }
 
@@ -76,17 +73,43 @@ const deleteOrder = ordersID => {
     axios.delete(`${apiUrl}/${apiPath}/orders`, {headers:{Authorization:token}}).then(response => {
       ordersRender(response.data.orders) ;
       highChartRender(response.data.orders) ;
-    }) 
+    }).catch(()=>{
+        Swal.fire({
+          position: 'center-center',
+          icon: 'error',
+          title: '刪除失敗',
+          showConfirmButton: false,
+          timer: 1500
+        })
+      })
   } else {
     axios.delete(`${apiUrl}/${apiPath}/orders/${ordersID}`, {headers:{Authorization:token}}).then(response => {
       ordersRender(response.data.orders) ;
       highChartRender(response.data.orders) ;
+      Swal.fire({
+        position: 'center-center',
+        icon: 'success',
+        title: '已成功刪除',
+        showConfirmButton: false,
+        timer: 1500
+      }).catch(()=>{
+        Swal.fire({
+          position: 'center-center',
+          icon: 'error',
+          title: '刪除失敗',
+          showConfirmButton: false,
+          timer: 1500
+        })
+      })
     })
   }
 }
 
 const ordersRender = data => { 
   let dataStr = '' ;
+  data.sort((a, b) => {
+    return b.createdAt - a.createdAt
+  })
   data.forEach((item, index) => {
     let otherProductsStr = '' ;
     let moreStr = '' ;
@@ -150,8 +173,17 @@ const ordersRender = data => {
 
 // highChart.js
 const highChartRender = orderData => {
+  // 全部資料暫存
   let tempData = [] ;
-  // 將訂單資料的商品 ID 數量整合
+  // 前三名資料暫存
+  let topThreeData = [] ;
+  let tempOtherData = {name:'其他', y: 0} ;
+
+  // 類別資料暫存
+  let tempCategoryData = []
+  let tempCategoryObj = {}
+
+  // 將訂單資料的商品 ID 數量整合並做營收遞減排序
   orderData.forEach(orderItem => {
     orderItem.products.forEach(item => {
       totalProductsData[item.id].totalQuantity += item.quantity ;
@@ -159,9 +191,41 @@ const highChartRender = orderData => {
   })
   tempData = Object.keys(totalProductsData) ;
   tempData.map((item, index) =>{
-    tempData[index] = {name:totalProductsData[item].title, y:totalProductsData[item].price*totalProductsData[item].totalQuantity}
+    tempData[index] = {
+      name: totalProductsData[item].title, 
+      y: totalProductsData[item].price*totalProductsData[item].totalQuantity,
+      category: totalProductsData[item].category 
+    }
     return
   })
+  tempData.sort((a, b) => {
+    return b.y - a.y
+  })
+
+  // 取出前三名資料與其他
+  tempData.forEach((item, index) => {
+    if (index < 3) {
+      topThreeData.push(item)
+    } else {
+      tempOtherData.y += item.y
+    }
+  })
+  topThreeData.push(tempOtherData)
+  
+  // 類別營收
+  tempData.forEach(item => {
+    if (tempCategoryObj [item.category] === undefined) {
+      tempCategoryObj[item.category] = item.y
+    } else {
+      tempCategoryObj[item.category] += item.y
+    }
+  })
+  tempCategoryData = Object.keys(tempCategoryObj)
+  tempCategoryData.map((item, index) => {
+    tempCategoryData[index] = {name:item, y:tempCategoryObj[item]}
+    return
+  }) 
+
   let colors = ['#3366CC', '#DC3912', '#FF9900', '#109618', '#990099', '#3B3EAC', '#0099C6', '#DD4477', '#66AA00', '#B82E2E', '#316395', '#994499', '#22AA99', '#AAAA11', '#6633CC', '#E67300', '#8B0707', '#329262', '#5574A6', '#3B3EAC'];
   Highcharts.chart('highChart', {
     chart: {
@@ -174,6 +238,7 @@ const highChartRender = orderData => {
       text: '全品項營收'
     },
     tooltip: {
+      // 格式化為 % 數
       // pointFormat: '{series.name}:<b>{point.percentage:.1f}%</b>'
     },
     colors: colors,
@@ -195,6 +260,74 @@ const highChartRender = orderData => {
     series: [{
       name: '實際營收',
       data: tempData
+    }],
+    credits: {
+      enabled: false
+  	}
+  }) ;
+  Highcharts.chart('highChartTopThree', {
+    chart: {
+      plotBackgroundColor: null,
+      plotBorderWidth: null,
+      plotShadow: false,
+      type: 'pie'
+    },
+    title: {
+      text: '前三名品項營收'
+    },
+    colors: ['#301E5F', '#5434A7', '#9D7FEA', '#DACBFF'],
+    plotOptions: {
+      pie: {
+        allowPointSelect: true,
+        innerSize: '50%',
+        cursor: 'pointer',
+        dataLabels: {
+            enabled: true,
+            format: '<b>{point.name}</b>: {point.percentage:.1f} %',
+            connectorColor: 'black'
+        }
+      }
+    },
+    xAxis: {
+      categories: Object.keys(totalProductsData)
+    },
+    series: [{
+      name: '實際營收',
+      data: topThreeData
+    }],
+    credits: {
+      enabled: false
+  	}
+  }) ;
+  Highcharts.chart('highChartCategory', {
+    chart: {
+      plotBackgroundColor: null,
+      plotBorderWidth: null,
+      plotShadow: false,
+      type: 'pie'
+    },
+    title: {
+      text: '類別總營收'
+    },
+    colors: ['#301E5F', '#5434A7', '#9D7FEA', '#DACBFF'],
+    plotOptions: {
+      pie: {
+        allowPointSelect: true,
+        innerSize: '50%',
+        cursor: 'pointer',
+        dataLabels: {
+            enabled: true,
+            format: '<b>{point.name}</b>: {point.percentage:.1f} %',
+            connectorColor: 'black'
+        }
+      }
+    },
+    xAxis: {
+      categories: Object.keys(totalProductsData)
+    },
+    series: [{
+      name: '實際營收',
+      data: tempCategoryData
     }],
     credits: {
       enabled: false
@@ -260,3 +393,4 @@ if (token && apiPath) {
 } else {
   tokenDisplay.classList.remove('d-none') ;
 }
+
