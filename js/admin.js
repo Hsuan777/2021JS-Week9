@@ -73,34 +73,17 @@ const deleteOrder = ordersID => {
     axios.delete(`${apiUrl}/${apiPath}/orders`, {headers:{Authorization:token}}).then(response => {
       ordersRender(response.data.orders) ;
       highChartRender(response.data.orders) ;
+      defaultNotice('success', '已全部刪除!')
     }).catch(()=>{
-        Swal.fire({
-          position: 'center-center',
-          icon: 'error',
-          title: '刪除失敗',
-          showConfirmButton: false,
-          timer: 1500
-        })
+      defaultNotice('error', '刪除失敗~')
       })
   } else {
     axios.delete(`${apiUrl}/${apiPath}/orders/${ordersID}`, {headers:{Authorization:token}}).then(response => {
       ordersRender(response.data.orders) ;
       highChartRender(response.data.orders) ;
-      Swal.fire({
-        position: 'center-center',
-        icon: 'success',
-        title: '已成功刪除',
-        showConfirmButton: false,
-        timer: 1500
-      }).catch(()=>{
-        Swal.fire({
-          position: 'center-center',
-          icon: 'error',
-          title: '刪除失敗',
-          showConfirmButton: false,
-          timer: 1500
-        })
-      })
+      defaultNotice('success', '已成功刪除!') ;
+    }).catch(()=>{
+      defaultNotice('error', '刪除失敗~')
     })
   }
 }
@@ -128,7 +111,7 @@ const ordersRender = data => {
       <td>${item.id}</td>
       <td>
         <p class="mb-0">${item.user.name}</p>
-        <pclass="mb-0">${item.user.tel}</pclass>
+        <p class="mb-0">${item.user.tel}</p>
       </td>
       <td>${item.user.address}</td>
       <td>${item.user.email}</td>
@@ -339,6 +322,16 @@ const highChartRender = orderData => {
 const formatDate = time => {
   let date = new Date(time) ;
   return `${date.getFullYear()}/${date.getMonth()+1}/${date.getDate()}` ;
+}
+
+const defaultNotice = (iconName, content) => { 
+  Swal.fire({
+    position: 'center-center',
+    icon: iconName,
+    title: content,
+    showConfirmButton: false,
+    timer: 1500
+  })
 }
 
 // 將 token 存入 cookie

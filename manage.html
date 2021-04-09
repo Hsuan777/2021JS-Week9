@@ -48,25 +48,23 @@
     <div id="highChartCategory"></div>
     <!-- 訂單編號 -->
     <section class="js-orderDisplay container d-none">
-      <div class="d-flex justify-content-between">
-        <button type="button" value="clearAll" class="js-delBtn btn btn-outline-dark">清除全部訂單</button>
-      </div>
-      <table class="table">
-        <thead>
+      <button type="button" value="clearAll" class="js-delBtn btn btn-outline-dark mb-3">清除全部訂單</button>
+      <table class="table table-striped">
+        <thead class="table-dark">
           <tr>
-            <th>訂單編號</th>
-            <th>聯絡人</th>
-            <th>聯絡地址</th>
-            <th>電子郵件</th>
-            <th>訂單品項</th>
-            <th>訂單日期</th>
-            <th class="text-center">訂單狀態</th>
-            <th class="text-center">操作</th>
+            <th scope="col">訂單編號</th>
+            <th scope="col">聯絡人</th>
+            <th scope="col">聯絡地址</th>
+            <th scope="col">電子郵件</th>
+            <th scope="col">訂單品項</th>
+            <th scope="col">訂單日期</th>
+            <th scope="col">處理狀態</th>
+            <th  class="text-center">操作</th>
           </tr>
         </thead>
         <tbody class="js-ordersList">
           
-        </thbody>
+        </tbody>
       </table>
     </section>
   </main>
