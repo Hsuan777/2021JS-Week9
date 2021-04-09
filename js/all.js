@@ -2,14 +2,16 @@
 const productsList = document.querySelector('.js-productsList') ;
 const productsCategory = document.querySelector('.js-productsCategory') ;
 const cartsList = document.querySelector('.js-cartsList') ;
+const delAll = document.querySelector('.js-delAll') ;
 const finalTotal = document.querySelector('.js-finalTotal') ;
 const submitOrder = document.querySelector('.js-submitOrder') ;
-const inputs = document.querySelectorAll("input[type=text],input[type=number],input[type=email],select[name=clientPay]") ;
+const inputs = document.querySelectorAll("input[type=text],input[type=number],input[type=email],input[type=tel],select[name=clientPay]") ;
 
 /* set 變數與初始值 */
 const apiUrl = 'https://hexschoollivejs.herokuapp.com/api/livejs/v1/customer/vic'
 let originProductsData = [] ;
 let originCartsData = [] ;
+let hasError = false
 
 // validate 表單驗證條件與錯誤訊息 
 const constraints = {
@@ -65,10 +67,7 @@ const init = () => {
   getProducts();
   getCarts();
 }
-// api 網址 行為
-// const apiUrl = name => {
-//   return `https://hexschoollivejs.herokuapp.com/api/livejs/v1/customer/vic/${name}`
-// }
+
 // get Data
 const getProducts = () => {
   axios.get(`${apiUrl}/products`).then(response => {
@@ -87,20 +86,26 @@ const getCarts = () => {
 // post Data
 const postProduct = productID => {
   let tempProduct = {data:{}} ;
-  let cartsHas = originCartsData.find(item => {
-    return item.product.id === productID ;
-  });
-  if (cartsHas === undefined) {
-    originProductsData.forEach(item => {
-      if (item.id === productID){
-        tempProduct.data.productId = productID ;
-        tempProduct.data.quantity = 1 ;
-      }
-    })
-    axios.post(`${apiUrl}/carts`, tempProduct).then(response => {
-      cartsRender(response.data.carts, response.data.finalTotal) ;
-    })
-  }
+  axios.get(`${apiUrl}/carts`).then(response => {
+    originCartsData = response.data.carts ;
+    let cartsHas = originCartsData.find(item => {
+      return item.product.id === productID ;
+    });
+    if (cartsHas === undefined) {
+      originProductsData.forEach(item => {
+        if (item.id === productID){
+          tempProduct.data.productId = productID ;
+          tempProduct.data.quantity = 1 ;
+        }
+      })
+      axios.post(`${apiUrl}/carts`, tempProduct).then(response => {
+        defaultNotice('success', '已加入購物車')
+        cartsRender(response.data.carts, response.data.finalTotal) ;
+      })
+    } else {
+      defaultNotice('warning', '購物車已有相同商品!')
+    }
+  })
 }
 
 const postOrder = Event => {
@@ -110,19 +115,19 @@ const postOrder = Event => {
   userObj.email   = Event.target[2].value ;
   userObj.address = Event.target[3].value ;
   userObj.payment = Event.target[4].value ;
-  if (cartsList.textContent !== ''){
-    axios.post(`${apiUrl}/orders`, {data:{user:userObj}}).then(response => {
-      if (response.status === 200) {
-        cartsRender([], 0);
-        Array.from(Event.target).forEach(item => {
-          if (item.value === '送出預訂資料'){
-            item.value = '送出預訂資料' ;
-          } else {
-            item.value = '' ;
-          }
-        })
-      }
+  // 若購物車為不為空且驗證成功
+  if (cartsList.textContent !== '' && hasError !== true){
+    axios.post(`${apiUrl}/orders`, {data:{user:userObj}}).then(() => {
+      cartsRender([], 0);
+      Event.target.reset()
+      defaultNotice('success', '感謝您的預定!')
+    }).catch(() => {
+      defaultNotice('error', '預定失敗~')
     })
+  } else if (hasError) {
+    defaultNotice('warning', '請檢查預定資訊是否有誤!')
+  } else if (cartsList.textContent === '') {
+    defaultNotice('warning', '購物車沒有商品喔!')
   }
 }
 
@@ -146,14 +151,21 @@ const patchProduct = (catrsID, quantity, action) => {
 // delete carts
 const deleteProduct = (cartsID) => {
   if (cartsID === 'clearAll' && cartsList.textContent === '') {
+    defaultNotice('warning', '購物車沒有東西~請趕緊加入!')
     return
   } else if (cartsID === 'clearAll' && cartsList.textContent !== '') {
-    axios.delete(`${apiUrl}/carts`).then(response => {
-      cartsRender(originCartsData, response.data.finalTotal) ;
-    }) 
+    axios.delete(`${apiUrl}/carts`).then(() => {
+      cartsRender([], 0) ;
+      defaultNotice('success', '已全部刪除!')
+    }).catch(() => {
+      defaultNotice('error', '刪除失敗~')
+    })
   } else {
     axios.delete(`${apiUrl}/carts/${cartsID}`).then(response => {
       cartsRender(response.data.carts, response.data.finalTotal) ;
+      defaultNotice('success', '已成功刪除!')
+    }).catch(() => {
+      defaultNotice('error', '刪除失敗~')
     })
   }
 }
@@ -232,6 +244,16 @@ const cartsRender = (data, totalMoney) => {
   })
   cartsList.innerHTML = dataStr ;
   finalTotal.textContent = `NT$${formatPrice(totalMoney)}` ;
+}
+
+const defaultNotice = (iconName, content) => { 
+  Swal.fire({
+    position: 'center-center',
+    icon: iconName,
+    title: content,
+    showConfirmButton: false,
+    timer: 1500
+  })
 }
 
 // 數字千分位
@@ -319,15 +341,21 @@ cartsList.addEventListener('click', Event => {
   }
 })
 
+delAll.addEventListener('click', Event => {
+  deleteProduct(Event.target.value)
+})
 
 inputs.forEach(item => {
   item.addEventListener('change', () => {
     item.nextElementSibling.textContent = '';
     let errors = validate(submitOrder, constraints);
     if (errors) {
+      hasError = true
       Object.keys(errors).forEach(item => {
         document.querySelector(`.${item}`).textContent =  errors[item][0].split(' ')[2]
       })
+    } else {
+      hasError = false
     }
   })
 })
