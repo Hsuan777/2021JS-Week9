@@ -117,7 +117,7 @@ const ordersRender = data => {
       </td>
       <td>${formatDate(item.createdAt*1000)}</td>
       <td class="bg-dark text-white">
-        <div class="d-flex align-items-center">
+        <div class="d-flex flex-column align-items-center">
           <label class="switch me-2">
             <input type="checkbox" data-orderID="${item.id}" ${item.paid ? 'checked' : ''} >
             <span class="slider round"></span>
@@ -125,9 +125,9 @@ const ordersRender = data => {
           <span>${item.paid ? '已處理' : '未處理'}</span> 
         </div>
       </td>
-      <td class="text-center">
+      <td class="text-end">
         ${moreStr}
-        <button type="button" value="${item.id}" class="js-delBtn btn btn-danger">刪除</button>
+        <button type="button" value="${item.id}" class="js-delBtn btn btn-outline-danger">刪除</button>
       </td>
     </tr>   
     `
