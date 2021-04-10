@@ -340,8 +340,8 @@ tokenSubmit.addEventListener('click', () => {
   if (pathInput.value !== '' && tokenInput.value !== ''){
     token = tokenInput.value ;
     apiPath = pathInput.value ;
-    document.cookie = `hexToken=${token}; expires=${new Date().getTime()*10}; path=/` ;
-    document.cookie = `hexPath=${apiPath}; expires=${new Date().getTime()*10}; path=/` ;
+    document.cookie = `hexToken=${token}; expires=${new Date().getTime()*1000}; path=/` ;
+    document.cookie = `hexPath=${apiPath}; expires=${new Date().getTime()*1000}; path=/` ;
     tokenInput.value = '' ;
     pathInput.value = '' ;
     getOrder() ;
