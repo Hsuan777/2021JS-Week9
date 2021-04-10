@@ -32,6 +32,7 @@ const getOrder = () => {
     errorMsg.textContent = 'Input Error' ;
     document.cookie = 'hexToken=; expires=; path=/' ;
     document.cookie = 'hexPath=; expires=; path=/' ;
+    defaultNotice('error', '登入失敗！')
   })
 }
 
@@ -336,7 +337,7 @@ const defaultNotice = (iconName, content) => {
 
 // 將 token 存入 cookie
 tokenSubmit.addEventListener('click', () => {
-  if (pathInput.value !== "" && tokenInput.value !== ""){
+  if (pathInput.value !== '' && tokenInput.value !== ''){
     token = tokenInput.value ;
     apiPath = pathInput.value ;
     document.cookie = `hexToken=${token}; expires=${new Date().getTime()*10}; path=/` ;
@@ -345,7 +346,13 @@ tokenSubmit.addEventListener('click', () => {
     pathInput.value = '' ;
     getOrder() ;
     getProducts() ;
-  } 
+  } else if (pathInput.value === '' && tokenInput.value === '') {
+    defaultNotice('warning', '請輸入 Path 與 Token')
+  } else if (pathInput.value === '') {
+    defaultNotice('warning', '請輸入 Path')
+  } else if (tokenInput.value === '') {
+    defaultNotice('warning', '請輸入 Token')
+  }
 })
 
 // 暫存 patch 與 token
@@ -358,7 +365,13 @@ tokenInput.addEventListener('keydown', Event => {
     tokenInput.value = '' ;
     getOrder() ;
     getProducts() ;
-  } 
+  } else if (Event.key === 'Enter' && pathInput.value === '' && tokenInput.value === '') {
+    defaultNotice('warning', '請輸入 Path 與 Token')
+  } else if (Event.key === 'Enter' && pathInput.value === '') {
+    defaultNotice('warning', '請輸入 Path')
+  } else if (Event.key === 'Enter' && tokenInput.value === '') {
+    defaultNotice('warning', '請輸入 Token')
+  }
 })
 
 

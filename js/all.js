@@ -74,12 +74,16 @@ const getProducts = () => {
     originProductsData = response.data.products ;
     categoryOptions() ;
     productsRender(originProductsData) ;
+  }).catch(() => {
+    defaultNotice('warning', '請重新整理頁面！')
   })
 }
 const getCarts = () => {
   axios.get(`${apiUrl}/carts`).then(response => {
     originCartsData = response.data.carts ;
     cartsRender(originCartsData, response.data.finalTotal) ;
+  }).catch(() => {
+    defaultNotice('warning', '請重新整理頁面！')
   })
 }
 
