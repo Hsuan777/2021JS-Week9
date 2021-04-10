@@ -11292,6 +11292,7 @@ fieldset:disabled .btn {
 
 body {
   overflow-x: hidden;
+  position: relative;
 }
 
 td, th {
@@ -11435,5 +11436,14 @@ input:focus + .slider {
 input:checked + .slider:before {
   -webkit-transform: translateX(26px);
   transform: translateX(26px);
+}
+
+.top {
+  position: fixed;
+  bottom: 4vh;
+  right: 5vw;
+  opacity: 0;
+  -webkit-transition: 0.3s;
+  transition: 0.3s;
 }
 /*# sourceMappingURL=all.css.map */

@@ -6,6 +6,7 @@ const delAll = document.querySelector('.js-delAll') ;
 const finalTotal = document.querySelector('.js-finalTotal') ;
 const submitOrder = document.querySelector('.js-submitOrder') ;
 const inputs = document.querySelectorAll("input[type=text],input[type=number],input[type=email],input[type=tel],select[name=clientPay]") ;
+const topBtn = document.querySelector('.js-top') ;
 
 /* set 變數與初始值 */
 const apiUrl = 'https://hexschoollivejs.herokuapp.com/api/livejs/v1/customer/vic'
@@ -265,8 +266,20 @@ const formatPrice = numStr => {
   return numStr.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") ;
 }
 
+
+// 是否顯示 top
+const showTop = () => {
+  const scrollTop = window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop
+  if (scrollTop > 100) {
+    topBtn.style.opacity = 1;
+  } else {
+    topBtn.style.opacity = 0 ;
+  }
+}
+
 // 預設執行
 init() ;
+window.addEventListener('scroll', showTop)
 
 /* 監聽事件 */
 // 在 DOM 結構被完整的讀取跟解析後，執行函式內動作
@@ -310,11 +323,7 @@ document.addEventListener('DOMContentLoaded', () => {
     recommendDOM.addEventListener('mousedown', mouseDownHandler) ;
 });
 
-submitOrder.addEventListener('submit', Event => {
-  Event.preventDefault() ;
-  postOrder(Event) ;
-})
-
+// 產品類別選擇
 productsCategory.addEventListener('change', Event => {
   let tempData = [] ;
   if (Event.target.value === 'all') {
@@ -329,6 +338,7 @@ productsCategory.addEventListener('change', Event => {
   }
 })
 
+// 購物車操作
 cartsList.addEventListener('click', Event => {
   switch (Event.target.dataset.action) {
     case 'down':
@@ -345,10 +355,12 @@ cartsList.addEventListener('click', Event => {
   }
 })
 
+// 購物車刪除全部
 delAll.addEventListener('click', Event => {
   deleteProduct(Event.target.value)
 })
 
+// 驗證表單資訊
 inputs.forEach(item => {
   item.addEventListener('change', () => {
     item.nextElementSibling.textContent = '';
@@ -361,5 +373,18 @@ inputs.forEach(item => {
     } else {
       hasError = false
     }
+  })
+})
+
+// 送出預定表單
+submitOrder.addEventListener('submit', Event => {
+  Event.preventDefault() ;
+  postOrder(Event) ;
+})
+
+topBtn.addEventListener('click', () => {
+  window.scrollTo({
+    top: 0,
+    behavior: 'smooth'
   })
 })

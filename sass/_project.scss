@@ -1,5 +1,6 @@
 body {
   overflow-x: hidden;
+  position: relative;
 }
 td, th {
   vertical-align: middle;
@@ -137,4 +138,11 @@ input:checked + .slider:before {
   transform: translateX(26px);
 }
 
+.top {
+  position: fixed;
+  bottom: 4vh;
+  right: 5vw;
+  opacity: 0;
+  transition: 0.3s;
+}
 
