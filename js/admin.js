@@ -15,11 +15,12 @@ let token = '' ;
 let apiPath = '' ;
 let originOrdersData = [] ;
 let totalProductsData = {} ;
+let uuid = {}
 
 /* function */
 // get Data
 const getOrder = () => { 
-  axios.get(`${apiUrl}/${apiPath}/orders`, {headers:{Authorization:token}})
+  axios.get(`${apiUrl}/${apiPath}/orders`, uuid)
   .then(response => {
     tokenDisplay.classList.add('d-none') ;
     orderDisplay.classList.remove('d-none') ;
@@ -62,30 +63,33 @@ const getProducts = () => {
 // put Data
 const putOrder = (orderID, bool) => { 
   let orderData = {data:{id: orderID, paid: bool}}
-  axios.put(`${apiUrl}/${apiPath}/orders`, orderData, {headers:{Authorization:token}}).then(response => {
+  axios.put(`${apiUrl}/${apiPath}/orders`, orderData, uuid).then(response => {
     ordersRender(response.data.orders) ;
   })
 }
 // delete Data
 const deleteOrder = ordersID => { 
   if (ordersID === 'clearAll' && ordersList.textContent === '') {
-    return
+    defaultNotice('error', '沒有訂單呦~')
   } else if (ordersID === 'clearAll' && ordersList.textContent !== '') {
-    axios.delete(`${apiUrl}/${apiPath}/orders`, {headers:{Authorization:token}}).then(response => {
-      ordersRender(response.data.orders) ;
-      highChartRender(response.data.orders) ;
-      defaultNotice('success', '已全部刪除!')
-    }).catch(()=>{
-      defaultNotice('error', '刪除失敗~')
-      })
+
+      ordersRender([]) ;
+      highChartRender([]) ;
+    // axios.delete(`${apiUrl}/${apiPath}/orders`, uuid).then(response => {
+    //   ordersRender(response.data.orders) ;
+    //   highChartRender(response.data.orders) ;
+    //   defaultNotice('success', '已全部刪除!')
+    // }).catch(()=>{
+    //   defaultNotice('error', '刪除失敗~')
+    //   })
   } else {
-    axios.delete(`${apiUrl}/${apiPath}/orders/${ordersID}`, {headers:{Authorization:token}}).then(response => {
-      ordersRender(response.data.orders) ;
-      highChartRender(response.data.orders) ;
-      defaultNotice('success', '已成功刪除!') ;
-    }).catch(()=>{
-      defaultNotice('error', '刪除失敗~')
-    })
+    // axios.delete(`${apiUrl}/${apiPath}/orders/${ordersID}`,  uuid).then(response => {
+    //   ordersRender(response.data.orders) ;
+    //   highChartRender(response.data.orders) ;
+    //   defaultNotice('success', '已成功刪除!') ;
+    // }).catch(()=>{
+    //   defaultNotice('error', '刪除失敗~')
+    // })
   }
 }
 
@@ -159,6 +163,7 @@ const ordersRender = data => {
 const highChartRender = orderData => {
   // 全部資料暫存
   let tempData = [] ;
+  
   // 前三名資料暫存
   let topThreeData = [] ;
   let tempOtherData = {name:'其他', y: 0} ;
@@ -209,8 +214,6 @@ const highChartRender = orderData => {
     tempCategoryData[index] = {name:item, y:tempCategoryObj[item]}
     return
   }) 
-
-  let colors = ['#3366CC', '#DC3912', '#FF9900', '#109618', '#990099', '#3B3EAC', '#0099C6', '#DD4477', '#66AA00', '#B82E2E', '#316395', '#994499', '#22AA99', '#AAAA11', '#6633CC', '#E67300', '#8B0707', '#329262', '#5574A6', '#3B3EAC'];
   Highcharts.chart('highChart', {
     chart: {
       plotBackgroundColor: null,
@@ -225,7 +228,7 @@ const highChartRender = orderData => {
       // 格式化為 % 數
       // pointFormat: '{series.name}:<b>{point.percentage:.1f}%</b>'
     },
-    colors: colors,
+    colors: ['#3366CC', '#DC3912', '#FF9900', '#109618', '#990099', '#3B3EAC', '#0099C6', '#DD4477', '#66AA00', '#B82E2E', '#316395', '#994499', '#22AA99', '#AAAA11', '#6633CC', '#E67300', '#8B0707', '#329262', '#5574A6', '#3B3EAC'],
     plotOptions: {
       pie: {
         allowPointSelect: true,
@@ -327,7 +330,7 @@ const formatDate = time => {
 
 const defaultNotice = (iconName, content) => { 
   Swal.fire({
-    position: 'center-center',
+    position: 'center',
     icon: iconName,
     title: content,
     showConfirmButton: false,
@@ -340,6 +343,7 @@ tokenSubmit.addEventListener('click', () => {
   if (pathInput.value !== '' && tokenInput.value !== ''){
     token = tokenInput.value ;
     apiPath = pathInput.value ;
+    uuid = {headers:{Authorization:token}}
     document.cookie = `hexToken=${token}; expires=${new Date().getTime()*1000}; path=/` ;
     document.cookie = `hexPath=${apiPath}; expires=${new Date().getTime()*1000}; path=/` ;
     tokenInput.value = '' ;
@@ -360,6 +364,7 @@ tokenInput.addEventListener('keydown', Event => {
   if (Event.key === 'Enter' && pathInput.value !== '' && tokenInput.value !== ''){
     token = tokenInput.value ;
     apiPath = pathInput.value ;
+    uuid = {headers:{Authorization:token}}
     document.cookie = `hexToken=${token}; expires=${new Date().getTime()*10}; path=/` ;
     document.cookie = `hexPath=${apiPath}; expires=${new Date().getTime()*10}; path=/` ;
     tokenInput.value = '' ;
@@ -385,6 +390,8 @@ signOut.addEventListener('click', () => {
   errorMsg.textContent = '' ;
   originOrdersData = [] ;
   totalProductsData = {} ;
+  token = '' ;
+  uuid = {} ;
   ordersRender(originOrdersData) ;
   highChartRender(originOrdersData) ;
   window.location.replace('./index.html') ;
@@ -394,6 +401,8 @@ signOut.addEventListener('click', () => {
 token = document.cookie.replace(/(?:(?:^|.*;\s*)hexToken\s*=\s*([^;]*).*$)|^.*$/, '$1') ;
 apiPath = document.cookie.replace(/(?:(?:^|.*;\s*)hexPath\s*=\s*([^;]*).*$)|^.*$/, '$1') ;
 if (token && apiPath) {
+  // 如果被修改，這邊還會重組驗證用物件
+  uuid = {headers:{Authorization:token}}
   getOrder() ;
   getProducts() ;
 } else {

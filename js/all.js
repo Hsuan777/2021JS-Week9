@@ -91,26 +91,24 @@ const getCarts = () => {
 // post Data
 const postProduct = productID => {
   let tempProduct = {data:{}} ;
-  axios.get(`${apiUrl}/carts`).then(response => {
-    originCartsData = response.data.carts ;
-    let cartsHas = originCartsData.find(item => {
-      return item.product.id === productID ;
-    });
-    if (cartsHas === undefined) {
-      originProductsData.forEach(item => {
-        if (item.id === productID){
-          tempProduct.data.productId = productID ;
-          tempProduct.data.quantity = 1 ;
-        }
-      })
-      axios.post(`${apiUrl}/carts`, tempProduct).then(response => {
-        defaultNotice('success', '已加入購物車')
-        cartsRender(response.data.carts, response.data.finalTotal) ;
-      })
-    } else {
-      defaultNotice('warning', '購物車已有相同商品!')
-    }
-  })
+  let cartsHas = originCartsData.find(item => {
+    return item.product.id === productID ;
+  });
+  if (cartsHas === undefined) {
+    originProductsData.forEach(item => {
+      if (item.id === productID){
+        tempProduct.data.productId = productID ;
+        tempProduct.data.quantity = 1 ;
+      }
+    })
+    axios.post(`${apiUrl}/carts`, tempProduct).then(response => {
+      originCartsData = response.data.carts ;
+      defaultNotice('success', '已加入購物車')
+      cartsRender(originCartsData, response.data.finalTotal) ;
+    })
+  } else {
+    defaultNotice('warning', '購物車已有相同商品!')
+  }
 }
 
 const postOrder = Event => {
@@ -121,7 +119,7 @@ const postOrder = Event => {
   userObj.address = Event.target[3].value ;
   userObj.payment = Event.target[4].value ;
   // 若購物車為不為空且驗證成功
-  if (cartsList.textContent !== '' && hasError !== true){
+  if (cartsList.textContent !== '' && !hasError){
     axios.post(`${apiUrl}/orders`, {data:{user:userObj}}).then(() => {
       cartsRender([], 0);
       Event.target.reset()
@@ -137,16 +135,13 @@ const postOrder = Event => {
 }
 
 // patch carts
-const patchProduct = (catrsID, quantity, action) => {
+const patchProduct = (catrsID, newQuantity) => {
   let tempProduct = {data:{}} ;
-  tempProduct.data.id = catrsID ;
-  if (action === "+"){
-    tempProduct.data.quantity = quantity*1 + 1 ;
-    axios.patch(`${apiUrl}/carts`, tempProduct).then(response => {
-      cartsRender(response.data.carts, response.data.finalTotal) ;
-    })
-  } else if (action === "-" && quantity !== "1"){
-    tempProduct.data.quantity = quantity - 1 ;
+  if (newQuantity === 0){
+    defaultNotice('warning', '數量不可低於 1 呦~') ;
+  } else {
+    tempProduct.data.id = catrsID ;
+    tempProduct.data.quantity = newQuantity ;
     axios.patch(`${apiUrl}/carts`, tempProduct).then(response => {
       cartsRender(response.data.carts, response.data.finalTotal) ;
     })
@@ -157,17 +152,18 @@ const patchProduct = (catrsID, quantity, action) => {
 const deleteProduct = (cartsID) => {
   if (cartsID === 'clearAll' && cartsList.textContent === '') {
     defaultNotice('warning', '購物車沒有東西~請趕緊加入!')
-    return
   } else if (cartsID === 'clearAll' && cartsList.textContent !== '') {
     axios.delete(`${apiUrl}/carts`).then(() => {
-      cartsRender([], 0) ;
+      originCartsData = []
+      cartsRender(originCartsData, 0) ;
       defaultNotice('success', '已全部刪除!')
     }).catch(() => {
       defaultNotice('error', '刪除失敗~')
     })
   } else {
     axios.delete(`${apiUrl}/carts/${cartsID}`).then(response => {
-      cartsRender(response.data.carts, response.data.finalTotal) ;
+      originCartsData = response.data.carts ;
+      cartsRender(originCartsData, response.data.finalTotal) ;
       defaultNotice('success', '已成功刪除!')
     }).catch(() => {
       defaultNotice('error', '刪除失敗~')
@@ -253,7 +249,7 @@ const cartsRender = (data, totalMoney) => {
 
 const defaultNotice = (iconName, content) => { 
   Swal.fire({
-    position: 'center-center',
+    position: 'center',
     icon: iconName,
     title: content,
     showConfirmButton: false,
@@ -342,10 +338,10 @@ productsCategory.addEventListener('change', Event => {
 cartsList.addEventListener('click', Event => {
   switch (Event.target.dataset.action) {
     case 'down':
-      patchProduct(Event.target.value, Event.target.nextElementSibling.dataset.quantity, "-")
+      patchProduct(Event.target.value, Event.target.nextElementSibling.dataset.quantity - 1)
       break;
     case 'up':
-      patchProduct(Event.target.value, Event.target.previousElementSibling.dataset.quantity, "+")
+      patchProduct(Event.target.value, Event.target.previousElementSibling.dataset.quantity*1 + 1)
       break;
     case 'delete':
       deleteProduct(Event.target.value)
