@@ -7,6 +7,7 @@ const tokenSubmit = document.querySelector('.js-tokenSubmit') ;
 const errorMsg = document.querySelector('.js-errorMsg') ;
 const orderDisplay = document.querySelector('.js-orderDisplay') ;
 const chartsDisplay = document.querySelector('.js-chartsDisplay') ;
+const delAllBtn = document.querySelector('.js-delAllBtn') ;
 const signOut = document.querySelector('.js-signOut') ;
 
 /* set 變數與初始值 */
@@ -30,8 +31,8 @@ const getOrder = () => {
     } else {
       chartsDisplay.classList.remove('d-none') ;
       highChartRender(originOrdersData) ;
-      ordersRender(originOrdersData) ;
     }
+    ordersRender(originOrdersData) ;
   }).catch(() => {
     tokenDisplay.classList.remove('d-none') ;
     errorMsg.textContent = 'Input Error' ;
@@ -71,10 +72,11 @@ const putOrder = (orderID, bool) => {
     ordersRender(response.data.orders) ;
   })
 }
+
 // delete Data
 const deleteOrder = ordersID => { 
   if (ordersID === 'clearAll' && ordersList.textContent === '') {
-    defaultNotice('error', '沒有訂單呦~')
+    defaultNotice('warning', '沒有訂單呦~')
   } else if (ordersID === 'clearAll' && ordersList.textContent !== '') {
     axios.delete(`${apiUrl}/${apiPath}/orders`, uuid).then(response => {
       chartsDisplay.classList.add('d-none') ;
@@ -83,7 +85,7 @@ const deleteOrder = ordersID => {
       defaultNotice('success', '已全部刪除!')
     }).catch(() => {
       defaultNotice('error', '刪除失敗~')
-      })
+    })
   } else {
     axios.delete(`${apiUrl}/${apiPath}/orders/${ordersID}`,  uuid).then(response => {
       ordersRender(response.data.orders) ;
@@ -93,7 +95,7 @@ const deleteOrder = ordersID => {
       }
       defaultNotice('success', '已成功刪除!') ;
     }).catch(() => {
-      defaultNotice('error', '刪除失敗~')
+      defaultNotice('error', '刪除失敗~') ;
     })
   }
 }
@@ -148,20 +150,13 @@ const ordersRender = data => {
     </tr>   
     `
   }) 
-  ordersList.innerHTML = dataStr ;
-  
-  const checkboxs = document.querySelectorAll('input[type=checkbox]') ;
-  const delBtns = document.querySelectorAll('.js-delBtn') ;
-  checkboxs.forEach(item => {
-    item.addEventListener('click', Event => {
-      putOrder(Event.target.getAttribute('data-orderID'), Event.target.checked) ;
-    })
-  })
-  delBtns.forEach(item => {
-    item.addEventListener('click', Event => {
-      deleteOrder(Event.target.value) ;
-    })
-  })
+  if (dataStr === '') {
+    delAllBtn.classList.add('d-none') ;
+    ordersList.innerHTML = `<tr><td colspan="9" class="text-center">還沒有訂單喔~</td></tr>` ;
+  } else {
+    delAllBtn.classList.remove('d-none') ;
+    ordersList.innerHTML = dataStr ;
+  }
 }
 
 // highChart.js
@@ -379,9 +374,9 @@ tokenInput.addEventListener('keydown', Event => {
   } else if (Event.key === 'Enter' && pathInput.value === '' && tokenInput.value === '') {
     defaultNotice('warning', '請輸入 Path 與 Token')
   } else if (Event.key === 'Enter' && pathInput.value === '') {
-    defaultNotice('warning', '請輸入 Path')
+    defaultNotice('warning', '請輸入 Path') ;
   } else if (Event.key === 'Enter' && tokenInput.value === '') {
-    defaultNotice('warning', '請輸入 Token')
+    defaultNotice('warning', '請輸入 Token') ;
   }
 })
 
@@ -415,3 +410,11 @@ if (token && apiPath) {
   tokenDisplay.classList.remove('d-none') ;
 }
 
+orderDisplay.addEventListener('click', Event => {
+  if (Event.target.tagName === 'BUTTON') {
+    deleteOrder(Event.target.value) ;
+  }
+  if (Event.target.tagName === "INPUT") {
+    putOrder(Event.target.getAttribute('data-orderID'), Event.target.checked) ;
+  }
+}, true)
