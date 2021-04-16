@@ -6,7 +6,7 @@ const pathInput = document.querySelector('.js-pathInput') ;
 const tokenSubmit = document.querySelector('.js-tokenSubmit') ;
 const errorMsg = document.querySelector('.js-errorMsg') ;
 const orderDisplay = document.querySelector('.js-orderDisplay') ;
-const chartDisplay = document.getElementById('.js-chart') ;
+const chartsDisplay = document.querySelector('.js-chartsDisplay') ;
 const signOut = document.querySelector('.js-signOut') ;
 
 /* set 變數與初始值 */
@@ -24,14 +24,13 @@ const getOrder = () => {
   .then(response => {
     tokenDisplay.classList.add('d-none') ;
     orderDisplay.classList.remove('d-none') ;
-    chartDisplay.classList.remove('d-none') ;
     originOrdersData = response.data.orders ;
     if (originOrdersData[0] === undefined) {
-      chartDisplay.classList.add('d-none') ;
-      defaultNotice('warning', '還沒有訂單喔!')
+      defaultNotice('warning', '還沒有訂單喔!') ;
     } else {
-      ordersRender(originOrdersData) ;
+      chartsDisplay.classList.remove('d-none') ;
       highChartRender(originOrdersData) ;
+      ordersRender(originOrdersData) ;
     }
   }).catch(() => {
     tokenDisplay.classList.remove('d-none') ;
@@ -77,9 +76,8 @@ const deleteOrder = ordersID => {
   if (ordersID === 'clearAll' && ordersList.textContent === '') {
     defaultNotice('error', '沒有訂單呦~')
   } else if (ordersID === 'clearAll' && ordersList.textContent !== '') {
-      // highChartRender(originOrdersData) ;
     axios.delete(`${apiUrl}/${apiPath}/orders`, uuid).then(response => {
-      chartDisplay.classList.add('d-none') ;
+      chartsDisplay.classList.add('d-none') ;
       ordersRender(response.data.orders) ;
       highChartRender(response.data.orders) ;
       defaultNotice('success', '已全部刪除!')
@@ -91,11 +89,9 @@ const deleteOrder = ordersID => {
       ordersRender(response.data.orders) ;
       highChartRender(response.data.orders) ;
       if (response.data.orders[0] === undefined) {
-        defaultNotice('warning', '沒有訂單了~')
-        chartDisplay.classList.add('d-none') ;
-      } else {
-        defaultNotice('success', '已成功刪除!') ;
+        chartsDisplay.classList.add('d-none') ;
       }
+      defaultNotice('success', '已成功刪除!') ;
     }).catch(() => {
       defaultNotice('error', '刪除失敗~')
     })
@@ -351,8 +347,8 @@ const defaultNotice = (iconName, content) => {
 // 將 token 存入 cookie
 tokenSubmit.addEventListener('click', () => {
   if (pathInput.value !== '' && tokenInput.value !== ''){
-    token = tokenInput.value ;
-    apiPath = pathInput.value ;
+    token = tokenInput.value.trim() ;
+    apiPath = pathInput.value.trim() ;
     uuid = {headers:{Authorization:token}}
     document.cookie = `hexToken=${token}; expires=${new Date().getTime()*1000}; path=/` ;
     document.cookie = `hexPath=${apiPath}; expires=${new Date().getTime()*1000}; path=/` ;
@@ -396,7 +392,7 @@ signOut.addEventListener('click', () => {
   document.cookie = 'hexPath=; expires=; path=/' ;
   tokenDisplay.classList.remove('d-none') ;
   orderDisplay.classList.add('d-none') ;
-  chartDisplay.classList.add('d-none') ;
+  chartsDisplay.classList.add('d-none') ;
   errorMsg.textContent = '' ;
   originOrdersData = [] ;
   totalProductsData = {} ;
