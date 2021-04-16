@@ -6,7 +6,7 @@ const pathInput = document.querySelector('.js-pathInput') ;
 const tokenSubmit = document.querySelector('.js-tokenSubmit') ;
 const errorMsg = document.querySelector('.js-errorMsg') ;
 const orderDisplay = document.querySelector('.js-orderDisplay') ;
-const chartDisplay = document.getElementById('highChart') ;
+const chartDisplay = document.getElementById('.js-chart') ;
 const signOut = document.querySelector('.js-signOut') ;
 
 /* set 變數與初始值 */
@@ -26,8 +26,13 @@ const getOrder = () => {
     orderDisplay.classList.remove('d-none') ;
     chartDisplay.classList.remove('d-none') ;
     originOrdersData = response.data.orders ;
-    ordersRender(originOrdersData) ;
-    highChartRender(originOrdersData) ;
+    if (originOrdersData[0] === undefined) {
+      chartDisplay.classList.add('d-none') ;
+      defaultNotice('warning', '還沒有訂單喔!')
+    } else {
+      ordersRender(originOrdersData) ;
+      highChartRender(originOrdersData) ;
+    }
   }).catch(() => {
     tokenDisplay.classList.remove('d-none') ;
     errorMsg.textContent = 'Input Error' ;
@@ -72,24 +77,28 @@ const deleteOrder = ordersID => {
   if (ordersID === 'clearAll' && ordersList.textContent === '') {
     defaultNotice('error', '沒有訂單呦~')
   } else if (ordersID === 'clearAll' && ordersList.textContent !== '') {
-
-      ordersRender([]) ;
-      highChartRender([]) ;
-    // axios.delete(`${apiUrl}/${apiPath}/orders`, uuid).then(response => {
-    //   ordersRender(response.data.orders) ;
-    //   highChartRender(response.data.orders) ;
-    //   defaultNotice('success', '已全部刪除!')
-    // }).catch(()=>{
-    //   defaultNotice('error', '刪除失敗~')
-    //   })
+      // highChartRender(originOrdersData) ;
+    axios.delete(`${apiUrl}/${apiPath}/orders`, uuid).then(response => {
+      chartDisplay.classList.add('d-none') ;
+      ordersRender(response.data.orders) ;
+      highChartRender(response.data.orders) ;
+      defaultNotice('success', '已全部刪除!')
+    }).catch(() => {
+      defaultNotice('error', '刪除失敗~')
+      })
   } else {
-    // axios.delete(`${apiUrl}/${apiPath}/orders/${ordersID}`,  uuid).then(response => {
-    //   ordersRender(response.data.orders) ;
-    //   highChartRender(response.data.orders) ;
-    //   defaultNotice('success', '已成功刪除!') ;
-    // }).catch(()=>{
-    //   defaultNotice('error', '刪除失敗~')
-    // })
+    axios.delete(`${apiUrl}/${apiPath}/orders/${ordersID}`,  uuid).then(response => {
+      ordersRender(response.data.orders) ;
+      highChartRender(response.data.orders) ;
+      if (response.data.orders[0] === undefined) {
+        defaultNotice('warning', '沒有訂單了~')
+        chartDisplay.classList.add('d-none') ;
+      } else {
+        defaultNotice('success', '已成功刪除!') ;
+      }
+    }).catch(() => {
+      defaultNotice('error', '刪除失敗~')
+    })
   }
 }
 
@@ -163,6 +172,7 @@ const ordersRender = data => {
 const highChartRender = orderData => {
   // 全部資料暫存
   let tempData = [] ;
+  let tempTotalProuctsData = JSON.parse(JSON.stringify(totalProductsData))
   
   // 前三名資料暫存
   let topThreeData = [] ;
@@ -175,15 +185,15 @@ const highChartRender = orderData => {
   // 將訂單資料的商品 ID 數量整合並做營收遞減排序
   orderData.forEach(orderItem => {
     orderItem.products.forEach(item => {
-      totalProductsData[item.id].totalQuantity += item.quantity ;
+      tempTotalProuctsData[item.id].totalQuantity += item.quantity ;
     })
   })
-  tempData = Object.keys(totalProductsData) ;
+  tempData = Object.keys(tempTotalProuctsData) ;
   tempData.map((item, index) =>{
     tempData[index] = {
-      name: totalProductsData[item].title, 
-      y: totalProductsData[item].price*totalProductsData[item].totalQuantity,
-      category: totalProductsData[item].category 
+      name: tempTotalProuctsData[item].title, 
+      y: tempTotalProuctsData[item].price * tempTotalProuctsData[item].totalQuantity,
+      category:tempTotalProuctsData[item].category 
     }
     return
   })
@@ -222,7 +232,7 @@ const highChartRender = orderData => {
       type: 'pie'
     },
     title: {
-      text: '全品項營收'
+      text: `全品項營收`
     },
     tooltip: {
       // 格式化為 % 數
@@ -251,7 +261,7 @@ const highChartRender = orderData => {
     credits: {
       enabled: false
   	}
-  }) ;
+  });
   Highcharts.chart('highChartTopThree', {
     chart: {
       plotBackgroundColor: null,

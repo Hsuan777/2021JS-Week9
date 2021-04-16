@@ -123,6 +123,7 @@ const postOrder = Event => {
     axios.post(`${apiUrl}/orders`, {data:{user:userObj}}).then(() => {
       cartsRender([], 0);
       Event.target.reset()
+      originCartsData = []
       defaultNotice('success', '感謝您的預定!')
     }).catch(() => {
       defaultNotice('error', '預定失敗~')
