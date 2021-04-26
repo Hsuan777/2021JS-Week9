@@ -105,6 +105,8 @@ const postProduct = productID => {
       originCartsData = response.data.carts ;
       defaultNotice('success', '已加入購物車')
       cartsRender(originCartsData, response.data.finalTotal) ;
+    }).catch(() => {
+      defaultNotice('warning', '加入購物車失敗!')
     })
   } else {
     defaultNotice('warning', '購物車已有相同商品!')
@@ -145,6 +147,8 @@ const patchProduct = (catrsID, newQuantity) => {
     tempProduct.data.quantity = newQuantity ;
     axios.patch(`${apiUrl}/carts`, tempProduct).then(response => {
       cartsRender(response.data.carts, response.data.finalTotal) ;
+    }).catch(() => {
+      defaultNotice('warning', '更改數量失敗!')
     })
   }
 }

@@ -70,6 +70,8 @@ const putOrder = (orderID, bool) => {
   let orderData = {data:{id: orderID, paid: bool}}
   axios.put(`${apiUrl}/${apiPath}/orders`, orderData, uuid).then(response => {
     ordersRender(response.data.orders) ;
+  }).catch(()=>{
+    defaultNotice('warning', '修改訂單狀態失敗!')
   })
 }
 
